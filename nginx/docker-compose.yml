@@ -1,0 +1,7 @@
+services:
+  nginx:
+    build: .
+    command: nginx -g 'daemon off;'
+    container_name: nginx
+    ports:
+      - 443:443

@@ -1,0 +1,11 @@
+services:
+  nginx:
+    build: nginx/
+    command: nginx -g 'daemon off;'
+    container_name: nginx
+    ports:
+      - 443:443
+  mariadb:
+    build: mariadb/
+    command: mysqld_safe
+    container_name: mariadb

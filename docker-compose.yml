@@ -1,11 +1,57 @@
+networks:
+  app-network:
+
+volumes:
+  db:
+  wordpress:
+
 services:
   nginx:
-    build: nginx/
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
     command: nginx -g 'daemon off;'
     container_name: nginx
+    depends_on:
+      - wordpress
+    #healthcheck:
+    #  test: ["nc", "wordpress", "9000"]
     ports:
       - 443:443
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - app-network
+
   mariadb:
-    build: mariadb/
-    command: mysqld_safe
+    build:
+      context: ./mariadb/
+      dockerfile: Dockerfile
     container_name: mariadb
+    restart: on-failure
+    env_file: .env
+    expose:
+      - "3306"
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - app-network
+
+  wordpress:
+    build:
+      context: ./wordpress/
+      dockerfile: Dockerfile
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    restart: on-failure
+    env_file: .env
+    #environment:
+    #  - WORDPRESS_DB_HOST=mariadb:3306
+    #  - WORDPRESS_DB_USER=$MARIADB_USER
+    #  - WORDPRESS_DB_PASSWORD=$MARIADB_PASSWORD
+      #- WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - app-network

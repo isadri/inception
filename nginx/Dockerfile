@@ -1,6 +1,6 @@
-FROM debian:12.0
+FROM debian:bullseye
 
-WORKDIR /mydir
+WORKDIR /app
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y nginx
 RUN apt-get install -y vim && apt-get install -y openssl
@@ -12,5 +12,4 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 EXPOSE 443
 
-COPY config/default.conf /etc/nginx/sites-enabled
-COPY config/index.html /var/www/html
+COPY config/default.conf /etc/nginx/sites-available/default

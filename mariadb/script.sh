@@ -1,33 +1,18 @@
+service mariadb start
+
 # for admin
-mysql -e "CREATE DATABASE mydb; CREATE USER 'manager'@localhost; GRANT ALL \
-        PRIVILEGES ON *.* TO 'manager'@'localhost'; FLUSH PRIVILEGES;"
+mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
+mysql -e "CREATE USER IF NOT EXISTS root_user@'%' IDENTIFIED BY '123456';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root_user'@'%';"
+mysql -e "FLUSH PRIVILEGES;"
 
-# for regular user
-mysql -e "CREATE USER 'worker'@localhost; GRANT ALL \
-        PRIVILEGES ON mydb.* TO 'worker'@'localhost'; FLUSH PRIVILEGES;"
+mysql -e "CREATE USER IF NOT EXISTS dbuser@'%' IDENTIFIED BY '123456';"
+mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'dbuser'@'%';"
+mysql -e "FLUSH PRIVILEGES;"
 
-# mysql_secure_installation
+echo "port = 3306" >> /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+#echo "bind_address = 0.0.0.0" >> /etc/mysql/mariadb.conf.d/50-server.cnf
 
-#Enter current password for root (enter for none): <enter>
-#Set root password? [Y/n] y
-#New password: abc
-#Re-enter new password: abc
-#Remove anonymous users? [Y/n] y
-#Disallow root login remotely? [Y/n] y
-#Remove test database and access to it? [Y/n] y
-#Reload privilege tables now? [Y/n] y
-
-# make sure that nobody can access the server without a password
-mysql -e "UPDATE mysql.user SET Password=PASSWORD('123456') WHERE User='root'"
-
-# kill the anonymous users
-mysql -e "DROP USER ''@'localhost'"
-
-# use $(hosntame) because the hostname varies
-mysql -e "DROP USER ''@'$(hostname)'"
-
-# kill off the demo database
-mysql -e "DROP DATABASE test"
-
-# make our changes take effect
-mysql -e "FLUSH PRIVILEGES"
+#mysqld_safe
+bash

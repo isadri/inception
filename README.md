@@ -2,7 +2,7 @@
 
 #### Table of Contents
 
-[Intoduction](#Introduction)
+* [Intoduction](#Introduction)
 
 # Introduction
 

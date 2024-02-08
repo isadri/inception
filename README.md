@@ -61,8 +61,8 @@ There is currently no such thing as Mac containers. However, you can run Linux c
 
 Kubernetes is an open-source project out of Google that has quickly emerged as the most popular tool for deploying and managing containerized apps.
 
-<aside>
-💡 A containerized app is an application running as a container.
+> [!NOTE]
+> A containerized app is an application running as a container.
 
 </aside>
 

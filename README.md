@@ -112,8 +112,7 @@ It’s often the case that many containers share one or more common filesystem l
 Containerized processes are just processes on the Docker server itself. They are running on the same exact instance of the Linux kernel as the host operating system. They even show up in the *ps* output on the Docker server. That is utterly different from a hypervisor, where the depth of process isolation usually includes running an entirely separate instance of the operating system kernel for each virtual machine.
 
 > [!WARNING]
-<aside>
-⛔ By default, many containers use UID 0 to launch processes. Because the container is *contained*, this seems safe, but in reality it isn’t. Because everything is running on the same kernel, many types of security vulnerabilities or simple misconfiguration can give the container’s *root* user unauthorized access to the host’s system resources, files, and processes.
+>⛔ By default, many containers use UID 0 to launch processes. Because the container is *contained*, this seems safe, but in reality it isn’t. Because everything is running on the same kernel, many types of security vulnerabilities or simple >misconfiguration can give the container’s *root* user unauthorized access to the host’s system resources, files, and processes.
 
 </aside>
 

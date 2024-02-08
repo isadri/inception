@@ -75,9 +75,7 @@ Docker is so powerful technology, and that often means something that comes with
 ### Client/Server Model
 
 It’s easiest to think of Docker as consisting of two parts: the client and the server/daemon.
-
-![Screenshot from 2024-02-07 14-53-46.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-07_14-53-46.png)
-
+![Screenshot_from_2024-02-07_14-53-46](https://github.com/isadri/inception/assets/116354167/664066b1-d6b2-4f7c-a828-aa32447c40f2)
 Optionally there is a third component called the registry, which stores Docker images and their metadata. The server does the ongoing work of building, running, and managing your containers, and you use the client to tell the server what to do. The Docker daemon can run on any number of servers in the infrastructure, and a single client can address any number of servers. Clients drive all of the communication, but Docker servers can talk directly to image registries when told to do so by the client. Clients are responsible for telling servers what to do, and servers focus on hosting containerized applications.
 
 Docker is a little different in structure from some other client/server software. It has a *docker* client and a *dockerd* server, but rather than being entirely monolithic, the server then orchestrates a few other components behind the scene on behalf of the client, including *docker-proxy*, *runc*, *containerd*, and sometimes *docker-init*. Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the *docker* command-line tool client to talk to the server, either from the server itself or, if properly secured, from a remote client.
@@ -103,8 +101,7 @@ Containers are not virtual machines but they’re very lightweight wrappers arou
 Virtual machines are by design a stand-in for real hardware that you might throw in a rack and leave there for a few years. Because a real server is what they’re abstracting, virtual machines are often long-lived in nature. Even in the cloud where companies often spin virtual machines up and down on demand, they usually have a running lifespan of days or more. On the other hand, a particular container might exist for months, or it may be created, run a task for a minute, and then be destroyed. All of that is OK, but it’s fundamentally different approach than the one virtual machines are typically used for.
 
 To help drive this differentiation home, if you run Docker on a Mac or Windows system you are leveraging a Linux virtual machine to run *dockerd*, the Docker server. However, on Linux *dockerd* can be run natively and therefore there is no need for a virtual machine to be run anywhere on the system.
-
-![Screenshot from 2024-02-07 17-56-16.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-07_17-56-16.png)
+![Screenshot_from_2024-02-07_17-56-16](https://github.com/isadri/inception/assets/116354167/933e6b87-8f8b-4ba1-9713-5e0192d37879)
 
 ### Limited Isolation
 

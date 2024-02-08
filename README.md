@@ -28,7 +28,7 @@ Containers are also fast to start and ultra-portable. Moving container workloads
 
 Modern containers started in the Linux world and are the product of an immense amount of work from a wide variety of people over a long period of time.
 
-Some of the major technologies that enabled the massive growth of containers in recent years include, **kernel namespaces**, **control groups (**or **cgroups)**, **capabilities**, and of course **Docker**. To re-emphasize what was said earlier - the modern container ecosystem is deeply indebted to the many individuals and organizations that laid the strong foundations that we currently build on.
+Some of the major technologies that enabled the massive growth of containers in recent years include, **kernel namespaces**, **control groups** (or **cgroups**), **capabilities**, and of course **Docker**. To re-emphasize what was said earlier - the modern container ecosystem is deeply indebted to the many individuals and organizations that laid the strong foundations that we currently build on.
 
 Despite all of this, containers remained complex and outside of the reach of most organizations. It wasn’t until Docker came along that containers were effectively democratized and accessible to the masses. Docker was the magic that made containers simple!
 

@@ -1,6 +1,6 @@
 # Docker
 
-# Note about this article
+## Note about this article
 
 All the information provided here is from three books: [**Docker Deep Dive by Nigel Poulton**](https://vk.com/doc281151819_663610256?hash=IkgbhjPqBezQ9si246ccWxj0Iv0ogZTLBuEk8ekWdOk), [**Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias**](https://dl.ebooksworld.ir/motoman/Docker.Up.and.Running.Shipping.Reliable.Containers.in.Production.2nd.Edition.www.EBooksWorld.ir.pdf) and [**The Docker Book by James Turnbull**](https://github.com/sudhabharadwajm/the-best-docker-books/blob/master/books/The%20Docker%20Book%20-%20James%20Turnbull%20-%20v17.03.0.pdf).
 
@@ -10,7 +10,7 @@ All the information provided here is from three books: [**Docker Deep Dive by Ni
 * [The Docker Engine](#The-Docker-Engine)
 * [Images](#Images)
 
-# Introduction
+## Introduction
 
 ### History
 
@@ -125,7 +125,7 @@ Creating a new container is much faster than creating a new virtual machine. The
 
 The lightness of containers means that you can use them for situations where creating another virtual machine would be too heavyweight or where you need something to be truly ephemeral. You probably wouldn’t, for instance, spin up an entire virtual machine to run a *curl* command to a website from a remote location, but you might spin up a new container for this purpose.
 
-# The Docker Engine
+## The Docker Engine
 
 Now let’s talk about the Docker engine. This technical stuff is not needed in order to use Docker, but as **Nigel Poulton** mentions in his book: *to be a real master of anything, you need to understand what’s going on under the hood*. So what’s the Docker engine?
 
@@ -138,7 +138,7 @@ The major components that make up Docker are the Docker daemon, the build system
 
 But the basic system interaction used in Docker is a client talking over an API to a server.
 
-## From LXC to libcontainer
+### From LXC to libcontainer
 
 In order to create a container, Docker needs to interact with the kernel. In the past, there was a components called LXC that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *control groups* (*cgroups*).
 
@@ -146,7 +146,7 @@ In order to create a container, Docker needs to interact with the kernel. In the
 
 The problem is that, LXC was Linux-specific, and being reliant on an external tool for something so core to the project was a huge risk. As a result, Docker. Inc. (the company) developed their own tool called *libcontainer* as a replacement for LXC.
 
-## Unix Philosophy
+### Unix Philosophy
 
 It is important to understand that the docker daemon doesn’t create a container directly, instead, it uses another components to do the work. This followed the tried-and-tested Unix philosophy of building small specialized tools that can be pieced together into large tools.
 
@@ -197,11 +197,11 @@ Once a container’s parent process runc process exits, the associated container
 - Keeping any STDIN and STDOUT streams open so that when the daemon is restarted, the container doesn’t terminate due to pipes being closed.
 - Returns the container’s exit status back to the daemon.
 
-## What is left to the daemon?
+### What is left to the daemon?
 
 The daemon is capable of pushing and pulling images, implementing the Docker API, authentication, security…
 
-# Images
+## Images
 
 An image is read-only package that contains everything you need to run an application. It includes application code, application dependencies, a minimal set of OS constructs, and metadata. A single image can be used to start one or more containers.
 
@@ -211,13 +211,13 @@ You get container images by *pulling* them from a *registry*. The most common re
 
 Images are made up of multiple *layers* that are stacked on top of each other and represented as a single object, and each identified by a unique hash. Inside of the image is a cut-down operating system (OS) and all of the files and dependencies required to run an application.
 
-## Images and containers
+### Images and containers
 
 ![Screenshot from 2024-02-08 17-53-45](https://github.com/isadri/inception/assets/116354167/f270653e-fec3-43da-b71a-2b7686a4e26a)
 
 You use the ‘docker run’ and docker service create commands to start one or more containers from a single image. Once you’ve started a container from an image, the two constructs become dependent on each other, and you cannot delete the image until the last container using it has been stopped and destroyed.
 
-## Images are usually small
+### Images are usually small
 
 The whole purpose of a container is to run a single application or service. This means it only needs the code and dependencies of the app it’s running, it doesn’t need anything else.
 
@@ -225,7 +225,7 @@ Images don’t include a kernel. This is because containers share the kernel of 
 
 Windows-bases images tend to be a lot bigger than Linux-based images because of the way the Windows OS works.
 
-## Pulling images
+### Pulling images
 
 A cleanly installed Docker host has no images in its local repository.
 
@@ -241,11 +241,11 @@ Now the image is present in the Docker host’s local repository. You can check 
 $ docker images
 ```
 
-## Image naming
+### Image naming
 
 When pulling an image, you have to specify the name of the image you’re pulling. **But how does Docker find an image?**
 
-## Image registries
+### Image registries
 
 Images are stored in centralized places called *registries*. The job of a registry is to securely store container images and make them easy to access from different environments.
 
@@ -255,7 +255,7 @@ Image registries contain one or more *image repositories*. In turn, image reposi
 
 ![Screenshot from 2024-02-08 18-13-50](https://github.com/isadri/inception/assets/116354167/ca2ba681-cf72-452e-b9d9-8ddbc1c9432f)
 
-## Image naming and tagging
+### Image naming and tagging
 
 As you saw, to pull a Debian image we used the following command `docker pull debian:latest`. The format for ‘docker pull’ is as follows:
 
@@ -270,7 +270,7 @@ One thing to note here is that if an image is tagged as *latest*, this doesn’t
 > [!WARNING]
 > The *latest* tag is a floating tag, and it is a really bad idea to use it in most production workflows, as your dependencies can get updated out from under you, and it is impossible to roll back to *latest* because the old version is no longer the one tagged *latest*. It is also makes it hard to verify if the same image is running on different servers.
 
-## Images and Layers
+### Images and Layers
 
 A Docker image is a collection of loosely-connected read-only layers where each layer comprises one or more files.
 
@@ -299,7 +299,7 @@ One thing I want to mention is that pulling images using their names (tags) has 
 $ docker images --digests <image>
 ```
 
-## Multi-Architecture Images:
+### Multi-Architecture Images:
 
 One question could be on your mind: **How does Docker know that it will install an image on Linux x64, on Windows x64 or on different versions of ARM?** There are two constructs that make this possible:
 

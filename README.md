@@ -40,6 +40,10 @@ Some of the major technologies that enabled the massive growth of containers in 
 
 Despite all of this, containers remained complex and outside of the reach of most organizations. It wasn’t until Docker came along that containers were effectively democratized and accessible to the masses. Docker was the magic that made containers simple!
 
+### Introducing Docker
+
+Docker is an open-source engine that automates the deployement of applications into containers. In other words, Docker gives you a simple interface that allowed you to create containers, managing networks and volumes, and more, for example, if you want to create a container, you just tell it to create one, and you don't need to do the complex work such as interacting with kernel. Docker is incredebly powerful and simple.
+
 ### Docker and Windows
 
 Microsoft has worked extremely hard to bring Docker and container technologies to the Windows platform.

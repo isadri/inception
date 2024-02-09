@@ -81,7 +81,8 @@ Docker is so powerful technology, and that often means something that comes with
 
 It’s easiest to think of Docker as consisting of two parts: the client and the server/daemon.
 
-![Screenshot from 2024-02-07 14-53-46.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-07_14-53-46.png)
+![Screenshot from 2024-02-07 14-53-46](https://github.com/isadri/inception/assets/116354167/984ffa44-eda9-4da9-ad75-bff77b616cfb)
+
 
 Optionally there is a third component called the registry, which stores Docker images and their metadata. The server does the ongoing work of building, running, and managing your containers, and you use the client to tell the server what to do. The Docker daemon can run on any number of servers in the infrastructure, and a single client can address any number of servers. Clients drive all of the communication, but Docker servers can talk directly to image registries when told to do so by the client. Clients are responsible for telling servers what to do, and servers focus on hosting containerized applications.
 
@@ -109,7 +110,7 @@ Virtual machines are by design a stand-in for real hardware that you might throw
 
 To help drive this differentiation home, if you run Docker on a Mac or Windows system you are leveraging a Linux virtual machine to run *dockerd*, the Docker server. However, on Linux *dockerd* can be run natively and therefore there is no need for a virtual machine to be run anywhere on the system.
 
-![Screenshot from 2024-02-07 17-56-16.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-07_17-56-16.png)
+![Screenshot from 2024-02-07 17-56-16](https://github.com/isadri/inception/assets/116354167/d614928e-2527-4062-a344-4204865d7b7b)
 
 ### Limited Isolation
 
@@ -139,7 +140,8 @@ The *Docker engine* (or just *Docker*) is the core software that runs and manage
 
 The major components that make up Docker are the Docker daemon, the build system, *containerd*, *runc*, and various plugins such networking and volumes.Together, these create and run containers.
 
-![Screenshot from 2024-02-08 14-51-29.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_14-51-29.png)
+![Screenshot from 2024-02-08 14-51-29](https://github.com/isadri/inception/assets/116354167/df6af995-5252-4e1e-97d4-4a04cf5bef0e)
+
 
 But the basic system interaction used in Docker is a client talking over an API to a server.
 
@@ -147,7 +149,7 @@ But the basic system interaction used in Docker is a client talking over an API 
 
 In order to create a container, Docker needs to interact with the kernel. In the past, there was a components called LXC that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *control groups* (*cgroups*).
 
-![Screenshot from 2024-02-08 15-03-51.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_15-03-51.png)
+![Screenshot from 2024-02-08 15-03-51](https://github.com/isadri/inception/assets/116354167/80ea2722-ee75-4a54-9468-e2eec28e1557)
 
 The problem is that, LXC was Linux-specific, and being reliant on an external tool for something so core to the project was a huge risk. As a result, Docker. Inc. (the company) developed their own tool called *libcontainer* as a replacement for LXC.
 
@@ -157,7 +159,7 @@ It is important to understand that the docker daemon doesn’t create a containe
 
 The next figure shows how Docker engine architecture looks like:
 
-![Screenshot from 2024-02-08 15-21-41.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_15-21-41.png)
+![Screenshot from 2024-02-08 15-21-41](https://github.com/isadri/inception/assets/116354167/08f749d6-b673-42a9-81f4-57ea6c0e5367)
 
 let’s explain what is *containerd*, *runc* and *shim*.
 
@@ -185,7 +187,7 @@ When you type this command, the Docker client sends it to the Docker daemon. The
 
 Despite its name, *containerd* cannot actually create containers. It uses *runc* to do that. *runc* interfaces with the OS kernel to pull together all of the constructs necessary to create a container (namespaces, cgroups etc.). The container process is started as a child process of *runc*, and as soon as it starts, *runc* will exit.
 
-![Screenshot from 2024-02-08 16-00-00.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_16-00-00.png)
+![Screenshot from 2024-02-08 16-00-00](https://github.com/isadri/inception/assets/116354167/0d8fbc88-d7ed-43b1-94ab-dd436da3d11b)
 
 Having all of the logic and code to start and manage containers removed from the daemon means that the entire container runtime is decoupled from the Docker daemon. Sometimes, this is referred as *daemonless containers* and it makes it possible to perform maintenance and upgrades on the Docker daemon without impacting running containers.
 
@@ -218,7 +220,7 @@ Images are made up of multiple *layers* that are stacked on top of each other an
 
 ## Images and containers
 
-![Screenshot from 2024-02-08 17-53-45.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_17-53-45.png)
+![Screenshot from 2024-02-08 17-53-45](https://github.com/isadri/inception/assets/116354167/f270653e-fec3-43da-b71a-2b7686a4e26a)
 
 You use the ‘docker run’ and docker service create commands to start one or more containers from a single image. Once you’ve started a container from an image, the two constructs become dependent on each other, and you cannot delete the image until the last container using it has been stopped and destroyed.
 
@@ -258,7 +260,7 @@ The most common registry is Docker Hub, but others exist. However, the Docker cl
 
 Image registries contain one or more *image repositories*. In turn, image repositories contain one or more images.
 
-![Screenshot from 2024-02-08 18-13-50.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-08_18-13-50.png)
+![Screenshot from 2024-02-08 18-13-50](https://github.com/isadri/inception/assets/116354167/ca2ba681-cf72-452e-b9d9-8ddbc1c9432f)
 
 ## Image naming and tagging
 
@@ -273,7 +275,8 @@ But this format will work only if the image is from an official repository. If y
 One thing to note here is that if an image is tagged as *latest*, this doesn’t guarantee that it is the most recent image in the repository. And a single image can have as many tags as you want.
 
 <aside>
-⛔ The *latest* tag is a floating tag, and it is a really bad idea to use it in most production workflows, as your dependencies can get updated out from under you, and it is impossible to roll back to *latest* because the old version is no longer the one tagged *latest*. It is also makes it hard to verify if the same image is running on different servers.
+[!WARNING]
+> The *latest* tag is a floating tag, and it is a really bad idea to use it in most production workflows, as your dependencies can get updated out from under you, and it is impossible to roll back to *latest* because the old version is no longer the one tagged *latest*. It is also makes it hard to verify if the same image is running on different servers.
 
 </aside>
 
@@ -281,7 +284,7 @@ One thing to note here is that if an image is tagged as *latest*, this doesn’t
 
 A Docker image is a collection of loosely-connected read-only layers where each layer comprises one or more files.
 
-![Screenshot from 2024-02-09 11-39-20.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-09_11-39-20.png)
+![Screenshot from 2024-02-09 11-39-20](https://github.com/isadri/inception/assets/116354167/b6287c39-9a2c-44a6-ae44-1ebb6ec089d4)
 
 Docker takes care of stacking the layers and representing them as a single unified object.
 
@@ -298,7 +301,7 @@ Remember, the output will be different in your Docker host.
 $ docker inspect debian:latest
 ```
 
-![Screenshot from 2024-02-09 11-45-46.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-09_11-45-46.png)
+![Screenshot from 2024-02-09 11-45-46](https://github.com/isadri/inception/assets/116354167/f7902830-bf7f-4486-ba37-dad963e0e1ab)
 
 This trimmed output shows one layer with its hash.
 
@@ -319,7 +322,7 @@ The **manifest list** is a list of architectures (CPU architecture) supported by
 
 For example, the *golang* image may have the following **manifest list** and **manifests**.
 
-![Screenshot from 2024-02-09 12-13-11.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-09_12-13-11.png)
+![Screenshot from 2024-02-09 12-13-11](https://github.com/isadri/inception/assets/116354167/4539fd18-f951-49e9-9052-37cbb29153a8)
 
 The **manifest list** has entries for each architecture the image supports.
 
@@ -327,4 +330,4 @@ For example, when Docker pulls an image on Linux on ARM,  Docker makes the relev
 
 You can use the ‘docker manifest inspect <image> | grep ‘architecture\|os’ to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
 
-![Screenshot from 2024-02-09 14-39-30.png](Docker%201b3809b7bf974f5794c421b4e24bf52b/Screenshot_from_2024-02-09_14-39-30.png)
+![Screenshot from 2024-02-09 14-39-30](https://github.com/isadri/inception/assets/116354167/95ea31a4-3162-43f9-ab27-1de44daa66c6)

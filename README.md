@@ -42,7 +42,7 @@ Despite all of this, containers remained complex and outside of the reach of mos
 
 ### Introducing Docker
 
-Docker is an open-source engine that automates the deployement of applications into containers. In other words, Docker gives you a simple interface that allowed you to create containers, managing networks and volumes, and more, for example, if you want to create a container, you just tell it to create one, and you don't need to do the complex work such as interacting with kernel. Docker is incredebly powerful and simple.
+Docker is an open-source engine that automates the deployement of applications into containers. It is so powerful technology, and that often means something that comes with a high level of complexity. And, under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server model. There are several pieces sitting behind the Docker API, including *containerd* and *runc* (these are responsible for starting and stopping containers (including building all of the OS constructs such as namespaces and cgroups), but the basic system interaction is a client talking over an API to a server. Underneath this simple exterior, Docker heavily leverages kernel mechanisms such iptables, virtual bridging, cgroups, namespaces, and various filesystems drivers.
 
 ### Docker and Windows
 
@@ -53,11 +53,11 @@ Windows desktop and server platforms support both of the following:
 - Windows containers
 - Linux containers
 
-*Windows containers* run Windows apps that require a host system with a Windows kernel. Windows 10 and Windows 11, as well as all modern versions of Windows Server, have native support Windows containers.
+*Windows containers* run Windows apps that require a host system with a Windows kernel. Windows 10 and Windows 11, as well as all modern versions of Windows Server, have native support of Windows containers.
 
 Any Windows host running the WSL 2 ( Windows Subsystem for Linux) can also run Linux containers. This makes Windows 10 and 11 great platforms for developing and testing Windows and Linux containers.
 
-However, despite all of the work Microsoft has done developing *Windows containers*, the vast majority of containers are Linux containers. This is because Linux containers are smaller and faster, and the majority of tooling exists for Linux.
+However, despite all of the work Microsoft has done developing *Windows containers*, the vast majority of containers are Linux containers. This is because Linux containers are smaller and faster.
 
 ### Windows containers vs Linux containers
 
@@ -69,30 +69,20 @@ As previously mentioned, it’s possible to run Linux containers on Windows mach
 
 There is currently no such thing as Mac containers. However, you can run Linux containers on your Mac using *Docker Desktop*. This works by seamlessly running your containers inside of a lightweight Linux VM on your Mac.
 
-### Kubernetes
-
-Kubernetes is an open-source project out of Google that has quickly emerged as the most popular tool for deploying and managing containerized apps.
-
-> [!NOTE]
-> A containerized app is an application running as a container.
-
-
-Kubernetes used to use Docker as its default *container runtime* - the low-level technology that pulls images and starts and stops containers. However, modern Kubernetes clusters have a pluggable container runtime interface (CRI) that makes it easy to swap-out different container runtimes.
-
-## Architecture
-
-Docker is so powerful technology, and that often means something that comes with a high level of complexity. And, under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server model. There are several pieces sitting behind the Docker API, including *containerd* and *runc* (these are responsible for starting and stopping containers (including building all of the OS constructs such as namespaces and cgroups), but the basic system interaction is a client talking over an API to a server. Underneath this simple exterior, Docker heavily leverages kernel mechanisms such iptables, virtual bridging, cgroups, namespaces, and various filesystems drivers.
+Let's now see how does a user interact with Docker.
 
 ### Client/Server Model
 
-It’s easiest to think of Docker as consisting of two parts: the client and the server/daemon.
+Docker is a client/server application. The Docker client talks to the Docker server or daemon, which, in turn, does all the work.
 
 ![Screenshot from 2024-02-07 14-53-46](https://github.com/isadri/inception/assets/116354167/984ffa44-eda9-4da9-ad75-bff77b616cfb)
 
 
 Optionally there is a third component called the registry, which stores Docker images and their metadata. The server does the ongoing work of building, running, and managing your containers, and you use the client to tell the server what to do. The Docker daemon can run on any number of servers in the infrastructure, and a single client can address any number of servers. Clients drive all of the communication, but Docker servers can talk directly to image registries when told to do so by the client. Clients are responsible for telling servers what to do, and servers focus on hosting containerized applications.
 
-Docker is a little different in structure from some other client/server software. It has a *docker* client and a *dockerd* server, but rather than being entirely monolithic, the server then orchestrates a few other components behind the scene on behalf of the client, including *docker-proxy*, *runc*, *containerd*, and sometimes *docker-init*. Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the *docker* command-line tool client to talk to the server, either from the server itself or, if properly secured, from a remote client.
+Docker is a little different in structure from some other client/server software. It has a *docker* client and a *dockerd* server, but rather than being entirely monolithic, the server then orchestrates a few other components behind the scene on behalf of the client, including *docker-proxy*, *runc* and *containerd*. Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the *docker* command-line tool client to talk to the server, either from the server itself or, if properly secured, from a remote client.
+
+![Screenshot from 2024-02-09 15-48-00](https://github.com/isadri/inception/assets/116354167/fb732bc6-ff4c-495b-aed3-9a0d515f93d7)
 
 ### Network Ports and Unix Sockets
 

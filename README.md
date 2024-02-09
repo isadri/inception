@@ -66,7 +66,7 @@ There is currently no such thing as Mac containers. However, you can run Linux c
 Kubernetes is an open-source project out of Google that has quickly emerged as the most popular tool for deploying and managing containerized apps.
 
 <aside>
-[!NOTE]
+> [!NOTE]
 > A containerized app is an application running as a container.
 
 </aside>
@@ -121,7 +121,7 @@ It’s often the case that many containers share one or more common filesystem l
 Containerized processes are just processes on the Docker server itself. They are running on the same exact instance of the Linux kernel as the host operating system. They even show up in the *ps* output on the Docker server. That is utterly different from a hypervisor, where the depth of process isolation usually includes running an entirely separate instance of the operating system kernel for each virtual machine.
 
 <aside>
-[!WARNING]
+> [!WARNING]
 > By default, many containers use UID 0 to launch processes. Because the container is *contained*, this seems safe, but in reality it isn’t. Because everything is running on the same kernel, many types of security vulnerabilities or simple misconfiguration can give the container’s *root* user unauthorized access to the host’s system resources, files, and processes.
 
 </aside>
@@ -275,7 +275,7 @@ But this format will work only if the image is from an official repository. If y
 One thing to note here is that if an image is tagged as *latest*, this doesn’t guarantee that it is the most recent image in the repository. And a single image can have as many tags as you want.
 
 <aside>
-[!WARNING]
+> [!WARNING]
 > The *latest* tag is a floating tag, and it is a really bad idea to use it in most production workflows, as your dependencies can get updated out from under you, and it is impossible to roll back to *latest* because the old version is no longer the one tagged *latest*. It is also makes it hard to verify if the same image is running on different servers.
 
 </aside>
@@ -291,7 +291,7 @@ Docker takes care of stacking the layers and representing them as a single unifi
 You can see the layers of an image by using the ‘docker inspect’ command, for example, if we inspect the image that we pulled, an output will be displayed, but we only interested in a field names *RootFS*.
 
 <aside>
-[!NOTE]
+> [!NOTE]
 > *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image.
 
 </aside>

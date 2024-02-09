@@ -82,7 +82,7 @@ Optionally there is a third component called the registry, which stores Docker i
 
 Docker is a little different in structure from some other client/server software. It has a *docker* client and a *dockerd* server, but rather than being entirely monolithic, the server then orchestrates a few other components behind the scene on behalf of the client, including *docker-proxy*, *runc* and *containerd*. Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the *docker* command-line tool client to talk to the server, either from the server itself or, if properly secured, from a remote client.
 
-![Screenshot from 2024-02-09 15-48-00](https://github.com/isadri/inception/assets/116354167/fb732bc6-ff4c-495b-aed3-9a0d515f93d7)
+![Screenshot from 2024-02-09 15-48-00](https://github.com/isadri/inception/assets/116354167/fb732bc6-ff4c-495b-aed3-9a0d515f93d7 = 20*40)
 
 ### Network Ports and Unix Sockets
 

@@ -291,7 +291,8 @@ Docker takes care of stacking the layers and representing them as a single unifi
 You can see the layers of an image by using the ‘docker inspect’ command, for example, if we inspect the image that we pulled, an output will be displayed, but we only interested in a field names *RootFS*.
 
 <aside>
-💡 *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image.
+[!NOTE]
+> *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image.
 
 </aside>
 

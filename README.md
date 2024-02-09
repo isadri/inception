@@ -1,5 +1,9 @@
 # Docker
 
+# Note about this article
+
+All of the information provided here is from three books: **Docker Deep Dive by Nigel Poulton**, **Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias** and **The Docker Book by James Turnbull**.
+
 #### Table of Contents
 
 * [Intoduction](#Introduction)

@@ -264,7 +264,7 @@ Image registries contain one or more *image repositories*. In turn, image reposi
 
 ## Image naming and tagging
 
-As you saw, to pull a Debian image we used the following command ‘docker pull debian:latest’. The format for ‘docker pull’ is as follows:
+As you saw, to pull a Debian image we used the following command `docker pull debian:latest`. The format for ‘docker pull’ is as follows:
 
 ```bash
 $ docker pull <repository>:<tag>
@@ -328,6 +328,6 @@ The **manifest list** has entries for each architecture the image supports.
 
 For example, when Docker pulls an image on Linux on ARM,  Docker makes the relevant calls to Docker Hub, and if a **manifest list** exists for the image, it will be parsed to see if an entry exists for Linux on ARM. If it exists, the **manifest** for the Linux ARM image is retrieved. Each layer is then pulled from Docker Hub and assembled on the Docker host.
 
-You can use the ‘docker manifest inspect <image> | grep ‘architecture\|os’ to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
+You can use the `docker manifest inspect <image> | grep ‘architecture\|os` to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
 
 ![Screenshot from 2024-02-09 14-39-30](https://github.com/isadri/inception/assets/116354167/95ea31a4-3162-43f9-ab27-1de44daa66c6)

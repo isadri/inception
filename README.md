@@ -260,7 +260,7 @@ Image registries contain one or more *image repositories*. In turn, image reposi
 As you saw, to pull a Debian image we used the following command `docker pull debian:latest`. The format for ‘docker pull’ is as follows:
 
 ```bash
-$ docker pull <repository>:<tag>
+$ # docker pull <repository>:<tag>
 ```
 
 But this format will work only if the image is from an official repository. If you do not specify an image tag after the repository name, Docker will assume you are referring to the image tagged as *latest*, and if the repository doesn’t have an image tagged as *latest* the command will fail.

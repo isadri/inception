@@ -318,3 +318,9 @@ For example, when Docker pulls an image on Linux on ARM,  Docker makes the relev
 You can use the `docker manifest inspect <image> | grep ‘architecture\|os` to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
 
 ![Screenshot from 2024-02-09 14-39-30](https://github.com/isadri/inception/assets/116354167/95ea31a4-3162-43f9-ab27-1de44daa66c6)
+
+## Containers
+
+A container is the runtime instance of an image. In the same way that you can start a virtual machine (VM) from a virtual machine template, you start one or more containers from a single image.
+
+

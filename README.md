@@ -67,10 +67,6 @@ As previously mentioned, it’s possible to run Linux containers on Windows mach
 
 There is currently no such thing as Mac containers. However, you can run Linux containers on your Mac using *Docker Desktop*. This works by seamlessly running your containers inside of a lightweight Linux VM on your Mac.
 
-Let's now see how does a user interact with Docker.
-
-![Screenshot from 2024-02-09 15-48-00](https://github.com/isadri/inception/assets/116354167/fb732bc6-ff4c-495b-aed3-9a0d515f93d7)
-
 ### Container Networking
 
 > [!NOTE]
@@ -131,12 +127,14 @@ Optionally there is a third component called the registry, which stores Docker i
 
 Docker is a little different in structure from some other client/server software. It has a *docker* client and a *dockerd* server, but rather than being entirely monolithic, the server then orchestrates a few other components behind the scene on behalf of the client, including *docker-proxy*, *runc* and *containerd*. Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the *docker* command-line tool client to talk to the server, either from the server itself or, if properly secured, from a remote client.
 
+![Screenshot from 2024-02-09 15-48-00](https://github.com/isadri/inception/assets/116354167/fb732bc6-ff4c-495b-aed3-9a0d515f93d7)
+
 > [!NOTE]
 > The *docker* command-line tool and *dockerd* daemon talk to each other over network sockets.
 
 ### From LXC to libcontainer
 
-In order to create a container, Docker needs to interact with the kernel. In the past, there was a components called LXC that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *control groups* (*cgroups*).
+In order to create a container, Docker needs to interact with the kernel. In the past, there was a components called **LXC** that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *control groups* (*cgroups*).
 
 ![Screenshot from 2024-02-08 15-03-51](https://github.com/isadri/inception/assets/116354167/80ea2722-ee75-4a54-9468-e2eec28e1557)
 
@@ -144,7 +142,7 @@ The problem is that, LXC was Linux-specific, and being reliant on an external to
 
 ### Unix Philosophy
 
-It is important to understand that the docker daemon doesn’t create a container directly, instead, it uses another components to do the work. This followed the tried-and-tested Unix philosophy of building small specialized tools that can be pieced together into large tools.
+It is important to understand that the docker daemon doesn’t create a container directly, instead, it uses another components to do that. This followed the tried-and-tested Unix philosophy of building small specialized tools that can be pieced together into large tools.
 
 The next figure shows how Docker engine architecture looks like:
 
@@ -158,7 +156,7 @@ let’s explain what is *containerd*, *runc* and *shim*.
 
 ### containerd
 
-The sole purpose of *containerd* in life is to manage container lifecycle operations such as *start*, *stop*, *pause*, *rm*…
+The sole purpose of *containerd* is to manage container lifecycle operations such as *start*, *stop*, *pause*, *rm*…
 
 In the Docker engine stack, *containerd* sits between the daemon and *runc*.
 
@@ -166,19 +164,20 @@ Before we explain what is *shim*, we need to understand the process of creating 
 
 ### Starting a New Container
 
-Docker cleanly hides any complexity behind the simple server API, though, so you can just think of it as a client and server for most purposes. Each Docker host will normally have one Docker server running that can manage a number of containers. You can then use the Docker CLI client to talk to the server, for example, you can enter the following command in the Docker CLI to start a new container based on the *alpine:latest* image.
+you can enter the following command in the Docker CLI to tell the daemon to start a new container based on the *alpine:latest* image.
 
 ```bash
 $ docker container run --name c1 -it alpine:latest sh
 ```
 
-When you type this command, the Docker client sends it to the Docker daemon. The docker client and the Docker server talk to each other over network sockets. Once the the daemon receives the command to create a new container, it makes a call to *containerd* (because the daemon doesn’t contain any code to create containers).
+When you type this command, the Docker client sends it to the Docker daemon. Once the the daemon receives the command to create a new container, it makes a call to *containerd* (because the daemon doesn’t contain any code to create containers).
 
 Despite its name, *containerd* cannot actually create containers. It uses *runc* to do that. *runc* interfaces with the OS kernel to pull together all of the constructs necessary to create a container (namespaces, cgroups etc.). The container process is started as a child process of *runc*, and as soon as it starts, *runc* will exit.
 
 ![Screenshot from 2024-02-08 16-00-00](https://github.com/isadri/inception/assets/116354167/0d8fbc88-d7ed-43b1-94ab-dd436da3d11b)
 
-Having all of the logic and code to start and manage containers removed from the daemon means that the entire container runtime is decoupled from the Docker daemon. Sometimes, this is referred as *daemonless containers* and it makes it possible to perform maintenance and upgrades on the Docker daemon without impacting running containers.
+> [!NOTE]
+> Having all of the logic and code to start and manage containers removed from the daemon means that the entire container runtime is decoupled from the Docker daemon. Sometimes, this is referred as *daemonless containers* and it makes it possible to perform maintenance and upgrades on the Docker daemon without impacting running containers.
 
 Let’s now talk about *shim*.
 
@@ -195,23 +194,23 @@ Once a container’s parent process runc process exits, the associated container
 
 ### What is left to the daemon?
 
-The daemon is capable of pushing and pulling images, implementing the Docker API, authentication, security…
+The daemon is capable of pushing and pulling images, implementing the Docker API, authentication, security, etc.
 
 ## Images
 
 An image is read-only package that contains everything you need to run an application. It includes application code, application dependencies, a minimal set of OS constructs, and metadata. A single image can be used to start one or more containers.
 
-You can think of images as similar to classes. You can create one or more objects from a class, same for images, you can create one or more containers from an image.
+You can think of images as similar to classes. You can create one or more objects from a class. Same for images, you can create one or more containers from an image.
 
 You get container images by *pulling* them from a *registry*. The most common registry is Docker Hub but others exist. The *pull* operation downloads an image to your local Docker host where Docker can use it to start one or more containers.
 
-Images are made up of multiple *layers* that are stacked on top of each other and represented as a single object, and each identified by a unique hash. Inside of the image is a cut-down operating system (OS) and all of the files and dependencies required to run an application.
+Images are made up of multiple *layers* that are stacked on top of each other and represented as a single object, and each identified by a unique hash. Inside of the image is a cut-down operating system (part of the OS) and all of the files and dependencies required to run an application.
 
 ### Images and containers
 
 ![Screenshot from 2024-02-08 17-53-45](https://github.com/isadri/inception/assets/116354167/f270653e-fec3-43da-b71a-2b7686a4e26a)
 
-You use the ‘docker run’ and docker service create commands to start one or more containers from a single image. Once you’ve started a container from an image, the two constructs become dependent on each other, and you cannot delete the image until the last container using it has been stopped and destroyed.
+You use the `docker run` and `docker service create` commands to start one or more containers from a single image. Once you’ve started a container from an image, the two constructs become dependent on each other, and you cannot delete the image until the last container using it has been stopped and destroyed.
 
 ### Images are usually small
 
@@ -225,7 +224,7 @@ Windows-bases images tend to be a lot bigger than Linux-based images because of 
 
 A cleanly installed Docker host has no images in its local repository.
 
-The process of getting images onto a Docker host is called *pulling*. So, if you want the latest Debian image on your Docker host, you’d have to *pull* it. To pull a Debian image with the latest version, use the following command:
+The process of getting images onto a Docker host is called *pulling an image*. So, if you want, for example, the latest Debian image on your Docker host, you’d have to *pull* it. To pull a Debian image with the latest version, use the following command:
 
 ```bash
 $ docker pull debian:latest
@@ -236,6 +235,9 @@ Now the image is present in the Docker host’s local repository. You can check 
 ```bash
 $ docker images
 ```
+
+![Screenshot from 2023-12-25 17-31-36](https://github.com/isadri/inception/assets/116354167/47ef1593-7c38-48ad-97e4-29ee8caacc0b)
+
 
 ### Image naming
 
@@ -274,7 +276,7 @@ A Docker image is a collection of loosely-connected read-only layers where each 
 
 Docker takes care of stacking the layers and representing them as a single unified object.
 
-You can see the layers of an image by using the ‘docker inspect’ command, for example, if we inspect the image that we pulled, an output will be displayed, but we only interested in a field names *RootFS*.
+You can see the layers of an image by using the `docker inspect` command, for example, if we inspect the image that we pulled, an output will be displayed, but we only interested in a field names *RootFS*.
 
 > [!NOTE]
 > *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image.
@@ -289,7 +291,8 @@ $ docker inspect debian:latest
 
 This trimmed output shows one layer with its hash.
 
-One thing I want to mention is that pulling images using their names (tags) has a problem, because tags are mutable. This means it’s possible to accidentally tag an image with the wrong tag (name). Sometimes, it’s even possible to tag an image with the same tag as an existing, but different, image. Instead of pulling images using tags, you can pull images using images digests. Every image has a cryptographic *content has* (called *digest*). It’s impossible to change the contents of the image without creating a new unique digest. To see the digest of an image, use the following command:
+> [!NOTE]
+> Pulling images using their names (tags) has a problem, because tags are mutable. This means it’s possible to accidentally tag an image with the wrong tag (name). Sometimes, it’s even possible to tag an image with the same tag as an existing, but different, image. Instead of pulling images using tags, you can pull images using images digests. Every image has a cryptographic *content hash* (called *digest*). It’s impossible to change the contents of the image without creating a new unique digest. To see the digest of an image, use the following command:
 
 ```bash
 $ docker images --digests <image>
@@ -302,7 +305,7 @@ One question could be on your mind: **How does Docker know that it will install 
 - **manifest lists**
 - **manifests**
 
-The **manifest list** is a list of architectures (CPU architecture) supported by a particular image tag. Each supported architecture then has its own *manifest* that lists the layers used to build it.
+The **manifest list** is a list of architectures (CPU architectures) supported by a particular image tag. Each supported architecture then has its own *manifest* that lists the layers used to build it.
 
 For example, the *golang* image may have the following **manifest list** and **manifests**.
 

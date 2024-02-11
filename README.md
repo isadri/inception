@@ -167,7 +167,7 @@ Before we explain what is *shim*, we need to understand the process of creating 
 you can enter the following command in the Docker CLI to tell the daemon to start a new container based on the *alpine:latest* image.
 
 ```bash
-$ docker container run --name c1 -it alpine:latest sh
+docker container run --name c1 -it alpine:latest sh
 ```
 
 When you type this command, the Docker client sends it to the Docker daemon. Once the the daemon receives the command to create a new container, it makes a call to *containerd* (because the daemon doesn’t contain any code to create containers).
@@ -227,13 +227,13 @@ A cleanly installed Docker host has no images in its local repository.
 The process of getting images onto a Docker host is called *pulling an image*. So, if you want, for example, the latest Debian image on your Docker host, you’d have to *pull* it. To pull a Debian image with the latest version, use the following command:
 
 ```bash
-$ docker pull debian:latest
+docker pull debian:latest
 ```
 
 Now the image is present in the Docker host’s local repository. You can check that the image is installed by using the following command:
 
 ```bash
-$ docker images
+docker images
 ```
 
 ![Screenshot from 2024-02-10 11-07-02](https://github.com/isadri/inception/assets/116354167/71b46f6d-349c-4d8b-b711-8edf392b860f)
@@ -257,7 +257,7 @@ Image registries contain one or more *image repositories*. In turn, image reposi
 As you saw, to pull a Debian image we used the following command `docker pull debian:latest`. The format for ‘docker pull’ is as follows:
 
 ```bash
-$ # docker pull <repository>:<tag>
+# docker pull <repository>:<tag>
 ```
 
 But this format will work only if the image is from an official repository. If you do not specify an image tag after the repository name, Docker will assume you are referring to the image tagged as *latest*, and if the repository doesn’t have an image tagged as *latest* the command will fail.
@@ -283,7 +283,7 @@ You can see the layers of an image by using the `docker inspect` command, for ex
 Remember, the output will be different in your Docker host.
 
 ```bash
-$ docker inspect debian:latest
+docker inspect debian:latest
 ```
 
 ![Screenshot from 2024-02-09 11-45-46](https://github.com/isadri/inception/assets/116354167/f7902830-bf7f-4486-ba37-dad963e0e1ab)
@@ -294,7 +294,7 @@ This trimmed output shows one layer with its hash.
 > Pulling images using their names (tags) has a problem, because tags are mutable. This means it’s possible to accidentally tag an image with the wrong tag (name). Sometimes, it’s even possible to tag an image with the same tag as an existing, but different, image. Instead of pulling images using tags, you can pull images using images digests. Every image has a cryptographic *content hash* (called *digest*). It’s impossible to change the contents of the image without creating a new unique digest. To see the digest of an image, use the following command:
 
 ```bash
-$ docker images --digests <image>
+docker images --digests <image>
 ```
 
 ### Multi-Architecture Images:
@@ -390,7 +390,7 @@ We see that the container have an IP address of 172.17.0.2, just like any other 
 The `ps` command does not exist in the container, so how do we install it? Well, remember, we are inside a Debian system, so we can just install `ps` command by using the `apt-get` package manager as follows.
 
 ```bash
-$ apt-get update && apt-get install procps
+apt-get update && apt-get install procps
 ```
 Now, after we installed the `ps` command, we can use it to see its running processes.
 
@@ -422,11 +422,11 @@ The *STATUS* field says that the container is stopped 2 minutes ago with 0 as th
 Our *container_1* container is stopped, how do we bring it back to life?
 To restart our stopped container we can use the `docker start` command with the name of our container or its ID.
 ```bash
-$ docker start container_1
+docker start container_1
 ```
 or
 ```bash
-$ docker start 0af8722f3fea
+docker start 0af8722f3fea
 ```
 
 > [!NOTE]
@@ -443,7 +443,7 @@ Our container is running now, but how can we go inside of it (or more technicall
 Our container is restarted with the same options we had specified when we launched it with the `docker run` command. So there is an interactive session waiting on our running container. We can reattach to that session using the `docker attack` command.
 
 ```bash
-$ docker attach container_1
+docker attach container_1
 ```
 And we will be brought back to our container's Bash prompt.
 If we exit this shell, the container will be stopped again.
@@ -461,3 +461,79 @@ You'll see that, instead of being attached to a shell like the case in *containe
 Now if we run `docker ps`, we see that the *container_2* is running.
 
 ![Screenshot from 2024-02-10 18-55-03](https://github.com/isadri/inception/assets/116354167/3531245d-16bb-4b60-bec0-55bf16d5eeda)
+
+You can use the `docker logs` command to fetche the logs of a container.
+
+![Screenshot from 2024-02-11 18-01-35](https://github.com/isadri/inception/assets/116354167/93654f4b-f2bd-4bd7-bb3f-b928d486a02c)
+
+### Running a process inside a running container
+
+You can run additional processes inside our containers using the `docker exec` command.
+There are two types of commands we can run inside a container: background and interactive. Background tasks run inside the container without interaction and interactive tasks remain in the foreground.
+For example, to create a file in the background inside the container, use the following command.
+```bash
+docker exec -d container_2 touch my_file
+```
+We can also run interactive tasks like opening a shell inside our container_2 container.
+```bash
+docker exec -it container_2 /bin/bash
+```
+This command will create a new bash session inside the container.
+
+### Stopping a daemonized container
+
+Now our container_2 container is running, but how to stop it? This is as simple as using the `docker stop` command.
+```bash
+docker stop container_2
+```
+or via the container ID
+```bash
+docker stop c18084c9f8f0
+```
+Now run the `docker ps -a` command to see that the container is actually stopped.
+
+### Automatic container restarts
+
+What if you want your container to be running even if the container has stopped because of a failure? To do this, you can use the `--restart` flag with the `docker run` command. The `--restart` checks for the container's exit code and makes a decision whether or not to restart it.
+```bash
+docker run -d --name container_3 --restart=always debian /bin/sh -c "while true: do echo hello inception; sleep 1; done"
+```
+There is three restart policies you can, and these are:
+  * `always`
+  * `unless-stopped`
+  * `on-failure`
+The `always` policy restarts a failed container unless it's been explicitly stopped. For example, we'll start a new interactive container and tell it to run a shell process. We'll then type `exit` to kill the shell. Since the shell is the main process inside of the container (it has PID 1), this will kill the container. However, Docker will automatically restart it because of the `--restart=always` policy.
+
+![Screenshot from 2024-02-11 18-22-00](https://github.com/isadri/inception/assets/116354167/6e10e881-ef5c-47f4-96d7-d20334651206)
+
+> [!NOTE]
+> Notice that the container is created 10 seconds ago and is running 4 seconds ago. This because it has been restarted.
+
+> [!NOTE]
+> Be aware that Docker has restarted the same container and not created a new one.
+
+> [!WARNING]
+> If you start a container with the `--restart=alway` policy and you stop it using `docker stop` and then you restart the Docker daemon, the container will be restarted.
+> You can try this, by stopping the container_4 container, and then restart the Docker daemon using `sudo systemctl restart docker`. When you type `docker ps`, you will that the container is automatically restarted.
+
+The main difference between the `always` and `unless-stopped` policies is that containers with the `--restart=unless-stopped` policy will not be restarted when the daemon restarts if they were in the *Stopped (Exited)* state.
+The `on-failure` policy will restart a container if it exits with a non-zero exit code. It will also restart containers when the Docker daemon restarts, even ones that were in the stopped state.
+
+### Deleting a container
+
+We've create many containers, and now we're not using any one of them, and they take some memory space. Thus, it's time to delete them.
+To delete a container, we use the `docker rm` container along with the name of the container we want to delete or its ID.
+```bash
+docker rm container_1
+```
+or
+```bash
+docker rm d54d3fa008e6
+```
+Writing the name of each container we want to delete is annoying. For that, we'll use this command to delete all the containers.
+```bash
+docker rum $(docker ps -aq)
+```
+
+> [!WARNING]
+> If a container is still running, it will not delete, you need to stop it first, and then delete, or you can use the `-f` flag to force. However, using the `-f` flag will send a **SIGKILL** signal, and the container will not stop gracefull. The `docker stop` command will sends a **SIGTERM** signal and gives the container, and the app it's running, a chance to complete any operations and gracefully exit.

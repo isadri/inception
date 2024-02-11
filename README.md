@@ -502,6 +502,7 @@ There is three restart policies you can, and these are:
   * `always`
   * `unless-stopped`
   * `on-failure`
+
 The `always` policy restarts a failed container unless it's been explicitly stopped. For example, we'll start a new interactive container and tell it to run a shell process. We'll then type `exit` to kill the shell. Since the shell is the main process inside of the container (it has PID 1), this will kill the container. However, Docker will automatically restart it because of the `--restart=always` policy.
 
 ![Screenshot from 2024-02-11 18-22-00](https://github.com/isadri/inception/assets/116354167/6e10e881-ef5c-47f4-96d7-d20334651206)

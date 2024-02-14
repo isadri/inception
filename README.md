@@ -598,7 +598,7 @@ docker run -it --name c2 debian bash
 > apt-get update && apt-get install -y iputils-ping
 > ```
 
-Now, we need the IP address of the `c1` container in order to ping it. To do that, exit from the `c2` container without stopping it (press Ctrl-P and Ctrl-Q).
+Now, we need the IP address of the `c1` container in order to ping it. To do that, exit from the `c2` container without stopping it (press Ctrl-P and then Ctrl-Q).
 We know that every container created is connected to the *bridge* network by default. If we inspect the *bridge* network, we'll see all the containers that are connected to it, with their names, MAC addresses and IP addresses. Use the `docker inspect bridge` command.
 
 ![Screenshot from 2024-02-14 11-48-59](https://github.com/isadri/inception/assets/116354167/79239ef7-34d1-440a-ae83-68733baa6f72)
@@ -650,3 +650,45 @@ ip addr
 ![Screenshot from 2024-02-14 13-27-08](https://github.com/isadri/inception/assets/116354167/15330dab-6966-4b00-bf7e-54837ae6575a)
 
 You can see from this list that the container has two network devices: the loopback interface (or localhost) and eth0 (a virtual Ethernet device), which is connected to the bridge network. The IP address of the eth0 (i.e., `172.18.0.2`) is the one that any other container on this bridge network should use to communicate with services you run in this container. The loopback interface can be used only for communication within the same container.
+Next, we'll create another bridge network and attach our running `network-explorer` container to both networks. First, detach your terminal from the running container (press Ctrl-P and then Ctrl-Q) and then create the second bridge network
+```bash
+docker network create --attachable user-network2
+```
+Again, check that the network has been created by using `docker network ls`.
+
+![Screenshot from 2024-02-14 15-16-45](https://github.com/isadri/inception/assets/116354167/ddd1d655-757e-460b-aaad-a7cc85bd5476)
+
+> [!NOTE]
+> Notice that the driver is the `bridge` driver even we didn't specify it with the `--driver` flag.
+
+Once the second network has been created, we can attach the `network-explorer` container to the `user-network2` network by using the following command.
+```bash
+docker network connect user-network2 network-explorer
+```
+After the container has been attached to the second network, we'll go back to our `network-explorer` container.
+```bash
+docker attach network-explorer
+```
+List again the IP address by using `ip addr` command.
+
+![Screenshot from 2024-02-14 15-20-36](https://github.com/isadri/inception/assets/116354167/fa13604f-a727-4267-8714-8b3227e4d1ef)
+
+We see that a new network interface has been added, and our container is attached to both user-defined bridge networks.
+Now, we'll back to our ping example, but instead of running two containers attached to the default bridge network, we'll run them in a user-defined network. Let's create a new container attached to the `user-network` network (you can use `user-network2`).
+```bash
+docker run -d --network user-network --name user1 debian sleep 1d
+```
+Now, run the other container
+```bash
+docker run -it --network user-network --name user2 debian bash
+```
+and install `ip` command using
+```bash
+apt-get update && apt-get install -y iputils-ping
+```
+Now, ping it using `ping user1` command.
+
+![Screenshot from 2024-02-14 15-38-15](https://github.com/isadri/inception/assets/116354167/9d2f6349-90b3-482f-af63-92bdf8469673)
+
+As you can see, we managed to ping the `user1` container by name instead of its IP address.
+This is because (and by [docker docs](#https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.

@@ -12,11 +12,11 @@ So if you're only interesting in practicing with Docker, you can go the [Hands-O
 
 #### Table of Contents
 1. [Theory](#Theory)
-  - [Intoduction](#Introduction)
-  - [The Docker Engine](#The-Docker-Engine)
-  - [Images](#Images)
-  - [Containers](#Containers)
-  - [Networking](#Networking)
+   * [Intoduction](#Introduction)
+   * [The Docker Engine](#The-Docker-Engine)
+   * [Images](#Images)
+   * [Containers](#Containers)
+   * [Networking](#Networking)
 
 2. [Hands-On](#Hands\-On)
 

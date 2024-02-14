@@ -11,12 +11,14 @@ I'll split this artice into two parts:
 So if you're only interesting in practicing with Docker, you can go the [Hands-On](#Hands\-On) part. And if you understand Docker concepts a little deep you should read the [Theory](#Theory) part.
 
 #### Table of Contents
+1. [Theory](#Theory)
+  * [Intoduction](#Introduction)
+  * [The Docker Engine](#The-Docker-Engine)
+  * [Images](#Images)
+  * [Containers](#Containers)
+  * [Networking](#Networking)
 
-* [Intoduction](#Introduction)
-* [The Docker Engine](#The-Docker-Engine)
-* [Images](#Images)
-* [Containers](#Containers)
-* [Networking](#Networking)
+2. [Hands-On](#Hands\-On)
 
 # Theory
 

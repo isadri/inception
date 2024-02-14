@@ -548,7 +548,11 @@ Networking is all about communicating between processes that may or may not shar
 ### Basics: Protocols, interfaces, and Ports
 
 A *protocol* with respect to communication and networking is a sort of language. Two parties that agree on a protocol can understand what the other is communicating.
-A network *interface* has an address and represents a location, and it has an IP address. It's common for computers to have two kinds of *interfaces*: an Ethernet interface and a loopback interface. An *Ethernet interface* is what you're likely most familiar with. It's used to connect to other interfaces and processes. A *loopback interface* isn't connected to any other interface.
+A network *interface* has an address and represents a location, and it has an IP address. It's common for computers to have two kinds of *interfaces*: an Ethernet interface and a loopback interface. An *Ethernet interface* is used to connect to other interfaces and processes. A *loopback interface* isn't connected to any other interface.
+
+> [!NOTE]
+> Each container has its own private loopback and a separate virtual Ethernet interface.
+
 A network interface is like a mailbox. Messages are delivered to a mailbox for recipients at that address (IP in case of network interface), and messages are taken from a mailbox to be delivered elsewhere.
 A *port* is like a recipient or a sender. Ports are just numbers, and each port is associated with a specific process or service.
 That's enough for the basics, let's get back to Docker networking.
@@ -615,3 +619,34 @@ But the problem is that if you want to ping the `c1` container by name (i.e., `p
 So, using the *bridge* default network is not recommended. And that's why you need to create your own bridge network.
 
 ### Creating a User-Defined Bridge Network
+
+Each container is assigned a unique private IP address that's not directly reachable from the external network. Connections are routed through another Docker network interface called *docker0*. All the containers that are on a network together can talk to each other directly. But to get to the host or the outside world, they go over the *docker0* virtual bridge interface.
+
+![Screenshot from 2024-02-14 13-15-44](https://github.com/isadri/inception/assets/116354167/97bb7a32-02e4-40eb-8ea1-6e51cfed250f)
+
+Build a new container with the following command:
+```bash
+docker network create --driver bridge --attachable user-network
+```
+This command creates a new local bridge network named `user-network`. And we specify the driver to be used to create the network as the `bridge` (by default it will be the `bridge`, so you can use the command without the `--driver` flag). Making the new network as `attachable` allows us to attach and detach containers from the network at any time. Check that the network has been created by running the `docker network ls`.
+
+![Screenshot from 2024-02-14 13-22-46](https://github.com/isadri/inception/assets/116354167/0ea39aec-b47a-4e98-8ede-7c604f2b13db)
+
+We'll now create a new container attached to that network.
+```bash
+docker run -it --network user-network --name network-explorer debian sh
+```
+List the IP addresses that are available in the container by running:
+```bash
+ip addr
+```
+
+> [!WARNING]
+> You need to install the `ip` command by running:
+> ```bash
+> apt-get update && apt-get install -y iproute2
+> ```
+
+![Screenshot from 2024-02-14 13-27-08](https://github.com/isadri/inception/assets/116354167/15330dab-6966-4b00-bf7e-54837ae6575a)
+
+You can see from this list that the container has two network devices: the loopback interface (or localhost) and eth0 (a virtual Ethernet device), which is connected to the bridge network. The IP address of the eth0 (i.e., `172.18.0.2`) is the one that any other container on this bridge network should use to communicate with services you run in this container. The loopback interface can be used only for communication within the same container.

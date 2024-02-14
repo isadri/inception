@@ -691,4 +691,4 @@ Now, ping it using `ping user1` command.
 ![Screenshot from 2024-02-14 15-38-15](https://github.com/isadri/inception/assets/116354167/9d2f6349-90b3-482f-af63-92bdf8469673)
 
 As you can see, we managed to ping the `user1` container by name instead of its IP address.
-This is because (and by [docker docs](#https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.
+This is because (and by [docker-docs](#https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.

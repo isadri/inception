@@ -5,8 +5,9 @@
 All the information provided here is from following books: [**Docker Deep Dive by Nigel Poulton**](https://vk.com/doc281151819_663610256?hash=IkgbhjPqBezQ9si246ccWxj0Iv0ogZTLBuEk8ekWdOk), [**Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias**](https://dl.ebooksworld.ir/motoman/Docker.Up.and.Running.Shipping.Reliable.Containers.in.Production.2nd.Edition.www.EBooksWorld.ir.pdf), [**The Docker Book by James Turnbull**](https://github.com/sudhabharadwajm/the-best-docker-books/blob/master/books/The%20Docker%20Book%20-%20James%20Turnbull%20-%20v17.03.0.pdf) and [**Docker in Action, Second Edition by Jeffrey Nickoloff and Stephen Kuenzli**](https://alek772.github.io/Books/Docker%20in%20Action%20Second%20Edition.pdf).
 I'll split this artice into two parts:
   1. [Theory](#Theory)
-  2. [Hands-On](#Hands---On)
-So if you're only interesting in practicing with Docker, you can go the [Hands-On](#Hands---On) part. And if you understand Docker concepts a little deep you should read the [Theory](#Theory) part.
+  2. [Hands-On](#Hands\-On)
+
+So if you're only interesting in practicing with Docker, you can go the [Hands-On](#Hands\-On) part. And if you understand Docker concepts a little deep you should read the [Theory](#Theory) part.
 
 #### Table of Contents
 
@@ -706,7 +707,7 @@ Docker allows us to do that by mapping the host port to the container port at co
 
 ![Screenshot from 2024-02-13 11-17-21](https://github.com/isadri/inception/assets/116354167/f772ad84-bb7c-4f55-b4b6-c1b4a5faf03f)
 
-This option will forward traffic hitting port 8080 from all host interfaces to port 8080 in the new container. This is the full format, you can use intead `8080:8080` for the same effect. We see this in action in the [Hands-on](#Hands---On) part.
+This option will forward traffic hitting port 8080 from all host interfaces to port 8080 in the new container. This is the full format, you can use intead `8080:8080` for the same effect. We see this in action in the [Hands-on](#Hands\-On) part.
 
 
 # Hands-On

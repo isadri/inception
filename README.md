@@ -9,6 +9,8 @@ All the information provided here is from three books: [**Docker Deep Dive by Ni
 * [Intoduction](#Introduction)
 * [The Docker Engine](#The-Docker-Engine)
 * [Images](#Images)
+* [Containers](#Containers)
+* [Networking](#Networking)
 
 ## Introduction
 
@@ -538,3 +540,78 @@ docker rum $(docker ps -aq)
 
 > [!WARNING]
 > If a container is still running, it will not delete, you need to stop it first, and then delete, or you can use the `-f` flag to force. However, using the `-f` flag will send a **SIGKILL** signal, and the container will not stop gracefull. The `docker stop` command will sends a **SIGTERM** signal and gives the container, and the app it's running, a chance to complete any operations and gracefully exit.
+
+## Networking
+
+Networking is all about communicating between processes that may or may not share the same local resources. To understand Docker networking, we need to understand some basic network abstractions that are commonly used by processes.
+
+### Basics: Protocols, interfaces, and Ports
+
+A *protocol* with respect to communication and networking is a sort of language. Two parties that agree on a protocol can understand what the other is communicating.
+A network *interface* has an address and represents a location, and it has an IP address. It's common for computers to have two kinds of *interfaces*: an Ethernet interface and a loopback interface. An *Ethernet interface* is what you're likely most familiar with. It's used to connect to other interfaces and processes. A *loopback interface* isn't connected to any other interface.
+A network interface is like a mailbox. Messages are delivered to a mailbox for recipients at that address (IP in case of network interface), and messages are taken from a mailbox to be delivered elsewhere.
+A *port* is like a recipient or a sender. Ports are just numbers, and each port is associated with a specific process or service.
+That's enough for the basics, let's get back to Docker networking.
+
+### Docker Networking
+
+When you install Docker, Docker creates a virtual network, the purpose of this virtual network is to connect all of the running containers to the network that your computer is connected to. This virutal network called a *bridge*.
+A bridge is an interface that connects multiple networks so that they can function as a single network. Bridges work by selectively forwarding traffic between the connected networks.
+
+![Screenshot from 2024-02-12 14-59-23](https://github.com/isadri/inception/assets/116354167/57b7d650-47dc-40ef-9e06-cf8150cc44ce)
+
+A container attached to a Docker network will get a unique IP address that is routable from other containers attached to the same Docker network.
+You can create and manage Docker networks directly by using the `docker network` subcommands.
+For example, to list the default networks that are availble with every Docker intallation, use the `docker network ls` command.
+
+![Screenshot from 2024-02-12 17-44-06](https://github.com/isadri/inception/assets/116354167/8820c940-3d09-4a6b-b04b-a134a63b0d2b)
+
+By default, Docker includes three networks, and each is provided by a different dirver. And these networks are:
+* ***bridge***:
+  this is the default network and provided by a *bridge* driver. The *bridge* driver provides intercontainer connectivity for all containers running on the same machine. The *bridge* driver uses Linux namepaces, virtual Ethernet devices, and the Linux firewall to build the *bridge* network. The *bridge* network is then local to the machine where Docker is installed and creates routes between participating containers and the wider network where the host is attached.
+*  ***host***:
+  this network is provided by the *host* driver, which instructs Docker not to create any special networking namespace or resources for attached containers (which is the case for the *bridge* network). Containers on the *host* network interact with the host's network stack like any other uncontained processes.
+*  ***none***:
+  the *none* network uses the *null* driver. Containers attached to the *none* network will not have any network connectivity outside themselves.
+
+> [!NOTE]
+> A driver is just a software that is responsible for the creation and management of all resources on the network.
+
+### Ping a Container From Another Container
+
+Let's create a new container and run it in the background.
+```bash
+docker run -d --name c1 debian sleep 1d
+```
+Now, create another interactive container.
+```bash
+docker run -it --name c2 debian bash
+```
+
+> [!WARNING]
+> We need the `ping` command to ping the c1 container. To install the `ping` command use the following command
+> ```bash
+> apt-get update && apt-get install -y iputils-ping
+> ```
+
+Now, we need the IP address of the `c1` container in order to ping it. To do that, exit from the `c2` container without stopping it (press Ctrl-P and Ctrl-Q).
+We know that every container created is connected to the *bridge* network by default. If we inspect the *bridge* network, we'll see all the containers that are connected to it, with their names, MAC addresses and IP addresses. Use the `docker inspect bridge` command.
+
+![Screenshot from 2024-02-14 11-48-59](https://github.com/isadri/inception/assets/116354167/79239ef7-34d1-440a-ae83-68733baa6f72)
+
+The output is trimmed because we're only interested in the containers that are connected to the network. We can see that both the `c1` and `c2` containers are attached to the *bridge* network along with their IP addresses. The IP address of the `c1` container is 172.17.0.2.
+Now attach to the `c2` container again by using the `docker attach c2` command.
+Once we are inside the `c2` container, we can ping the `c1` container.
+
+![Screenshot from 2024-02-14 11-49-49](https://github.com/isadri/inception/assets/116354167/169d3837-b849-458e-ad8b-2666474e3f27)
+
+The command works!
+
+But the problem is that if you want to ping the `c1` container by name (i.e., `ping c1`), the command won't work. This is because the *bridge* network support a Docker feature called *service discovery*.
+
+> [!NOTE]
+> *Service discovery* allows all containers and Swarm services to locate each other by name. The only requirement is that they be on the same network.
+
+So, using the *bridge* default network is not recommended. And that's why you need to create your own bridge network.
+
+### Creating a User-Defined Bridge Network

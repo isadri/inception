@@ -1,8 +1,12 @@
 # Docker
 
-## Note about this article
+## Notes about this article
 
 All the information provided here is from following books: [**Docker Deep Dive by Nigel Poulton**](https://vk.com/doc281151819_663610256?hash=IkgbhjPqBezQ9si246ccWxj0Iv0ogZTLBuEk8ekWdOk), [**Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias**](https://dl.ebooksworld.ir/motoman/Docker.Up.and.Running.Shipping.Reliable.Containers.in.Production.2nd.Edition.www.EBooksWorld.ir.pdf), [**The Docker Book by James Turnbull**](https://github.com/sudhabharadwajm/the-best-docker-books/blob/master/books/The%20Docker%20Book%20-%20James%20Turnbull%20-%20v17.03.0.pdf) and [**Docker in Action, Second Edition by Jeffrey Nickoloff and Stephen Kuenzli**](https://alek772.github.io/Books/Docker%20in%20Action%20Second%20Edition.pdf).
+I'll split this artice into two parts:
+  1. [Theory](#Theory)
+  2. [Hands-On](#Hands---On)
+So if you're only interesting in practicing with Docker, you can go the [Hands-On](#Hands---On) part. And if you understand Docker concepts a little deep you should read the [Theory](#Theory) part.
 
 #### Table of Contents
 
@@ -11,6 +15,8 @@ All the information provided here is from following books: [**Docker Deep Dive b
 * [Images](#Images)
 * [Containers](#Containers)
 * [Networking](#Networking)
+
+# Theory
 
 ## Introduction
 
@@ -691,4 +697,16 @@ Now, ping it using `ping user1` command.
 ![Screenshot from 2024-02-14 15-38-15](https://github.com/isadri/inception/assets/116354167/9d2f6349-90b3-482f-af63-92bdf8469673)
 
 As you can see, we managed to ping the `user1` container by name instead of its IP address.
-This is because (and by [docker-docs](https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.
+This is because (and by [docker docs](https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.
+
+### Port Publication
+
+Now that we can connect a container with another, how can we connect it to an external network?
+Docker allows us to do that by mapping the host port to the container port at container creationg and cannot be changed later, so traffic hitting the host port will be directed to the container port. The `docker run` and `docker create` commands provide a `-p` or `--publish` list option. The format of the `-p` option is as follows
+
+![Screenshot from 2024-02-13 11-17-21](https://github.com/isadri/inception/assets/116354167/f772ad84-bb7c-4f55-b4b6-c1b4a5faf03f)
+
+This option will forward traffic hitting port 8080 from all host interfaces to port 8080 in the new container. This is the full format, you can use intead `8080:8080` for the same effect. We see this in action in the [Hands-on](#Hands---On) part.
+
+
+# Hands-On

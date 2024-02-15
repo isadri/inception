@@ -10,7 +10,7 @@ I'll split this artice into two parts:
 
 So if you're only interesting in practicing with Docker, you can go to the [Hands-On](#Hands\-On) part. And if you want to understand Docker concepts a little deeper you should read the [Theory](#Theory) part.
 
-#### Table of Contents
+## Table of Contents
 1. [Theory](#Theory)
    * [Intoduction](#Introduction)
    * [The Docker Engine](#The-Docker-Engine)

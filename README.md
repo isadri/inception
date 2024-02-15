@@ -8,7 +8,7 @@ I'll split this artice into two parts:
   1. [Theory](#Theory)
   2. [Hands-On](#Hands\-On)
 
-So if you're only interesting in practicing with Docker, you can go the [Hands-On](#Hands\-On) part. And if you understand Docker concepts a little deep you should read the [Theory](#Theory) part.
+So if you're only interesting in practicing with Docker, you can go to the [Hands-On](#Hands\-On) part. And if you want to understand Docker concepts a little deeper you should read the [Theory](#Theory) part.
 
 #### Table of Contents
 1. [Theory](#Theory)

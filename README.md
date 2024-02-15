@@ -712,5 +712,11 @@ Docker allows us to do that by mapping the host port to the container port at co
 
 This option will forward traffic hitting port 8080 from all host interfaces to port 8080 in the new container. This is the full format, you can use intead `8080:8080` for the same effect. We see this in action in the [Hands-on](#Hands\-On) part.
 
+## Docker Volumes
+
+### File Trees and Mount Points
+
+Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called 
+
 
 # Hands-On

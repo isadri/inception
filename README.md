@@ -716,7 +716,18 @@ This option will forward traffic hitting port 8080 from all host interfaces to p
 
 ### File Trees and Mount Points
 
-Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called 
+Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called *mount points*. A mount point defines the location in the tree, the access properties to the data at that point (for example, writability), and the source of the data mounted at that point (for example, a specific hard disk, USB device, or memory-backed virtual disk).
 
+![Screenshot from 2024-02-15 10-29-04](https://github.com/isadri/inception/assets/116354167/e515cc82-72c1-461a-8855-0e98933d673e)
+
+Mount points allow software and users to use the file tree in a Linux environment without knowing exactly how that tree is mapped into specific storage devices.
+Every container has something called a *MNT namespace* (I'll explain *namespaces* later) and a unique file tree root. The image that a container is created from is mounted at that container's file tree root, or at the / point, and that every container has a different set of mount points.
+Logic follows that if different storage devices can be mounted at various points in a file tree, we can mount nonimage-related storage at other points in a container file tree. That is exactly how containers get access to storage on the host filesystem and share storage between containers.
+The three most common types of storage mounted into containers:
+  * Bind mounts
+  * In-memory storage
+  * Docker volumes
+
+All three types of mount points can be created using the `--mount` flag on the `docker run` and `docker create` subcommands.
 
 # Hands-On

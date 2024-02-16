@@ -20,6 +20,9 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
 
 2. [Hands-On](#Hands\-On)
 
+> [!WARNING]
+> You may have run the docker commands with `sudo`.
+
 # Theory
 
 ## Introduction

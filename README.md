@@ -735,5 +735,13 @@ All three types of mount points can be created using the `--mount` flag on the `
 *Bind mounts* are mount points used to remount parts of a filesystem tree onto other locations. When working with containers, bind mounts attach a user-specified location on the host filesystem to a specific point in a container file tree. Bind mounts are useful when the host provides a file or directory that is needed by a program running in a container, or when that containerized program produces a file or log that is processed by users or programs running outside containers.
 The problem with bind mounts is that they tie otherwise portable container descriptions to the filesystem of a specific host. If a container description depends on content at a specific location on the host filesystem, that description isn't protable to host where the content is unavailable or available in some other location.
 
+### In-Memory Storage
+
+Most service software and web applications use private key files, database passwords, API key files, or other sensitive configuration files, and need upload buffering space. In these cases, it is important that you never include those types of files in an image or write them to disk. Instead, you should use in-memory storage. For example, to run a container with in-memory storage as its mount type, you can set the type as follows.
+```docker
+docker run --mount type=tmpfs,dst=/tmp <image>
+```
+This command creates an empty `tmpfs` device and attaches it to the new container's file tree at /tmp. Any files created under this file tree will be written to memory instead of disk.
+
 
 # Hands-On

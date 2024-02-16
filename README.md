@@ -22,7 +22,7 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
 
 ---
 > [!WARNING]
-> You may have run the docker commands with `sudo`.
+> You may have to run the docker commands with `sudo`.
 
 ---
 

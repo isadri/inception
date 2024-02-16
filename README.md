@@ -714,6 +714,17 @@ This option will forward traffic hitting port 8080 from all host interfaces to p
 
 ## Docker Volumes
 
+There are two main categories of data: persistent and non-persistent.
+Persistent is the data we need to keep. *Non-persisten* is the data we don't need to keep.
+* Non-persistent Data:
+
+  To deal with non-persistent data, Every Docker container gets its own non-persistent storage. When a container is launched from an image, Docker mounts a read-write filesystem on top of any layers of the image that the container was created from. This is where whatever processes we want our container to run will execute.
+When Docker first starts a container, the initial read-write layer is empty. As changes occur, they are applied to this layer; for example, if you want to change a file, then that file will be copied from the read-only layer below into the read-write layer. The read-only version of the file will still exist but is now hidden underneath the copy.
+This pattern is traditionally called *copy on write*. Each read-only layer is read-only, this image never changes. When a container is created, Docker builds from the stack of images and then adds the read-write layer on top. That layer, combined with the knowledge of the image layers below it and some configuration data, form the container.
+As a result, deleting the container will delete the storage and any data on it.
+* Persistent Data:
+  To deal with persistent data, you need to manage the container filesystem and mount points.
+
 ### File Trees and Mount Points
 
 Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called *mount points*. A mount point defines the location in the tree, the access properties to the data at that point (for example, writability), and the source of the data mounted at that point (for example, a specific hard disk, USB device).
@@ -743,5 +754,6 @@ docker run --mount type=tmpfs,dst=/tmp <image>
 ```
 This command creates an empty `tmpfs` device and attaches it to the new container's file tree at /tmp. Any files created under this file tree will be written to memory instead of disk.
 
+### Docker Volumes
 
 # Hands-On

@@ -723,6 +723,7 @@ When Docker first starts a container, the initial read-write layer is empty. As 
 This pattern is traditionally called *copy on write*. Each read-only layer is read-only, this image never changes. When a container is created, Docker builds from the stack of images and then adds the read-write layer on top. That layer, combined with the knowledge of the image layers below it and some configuration data, form the container.
 As a result, deleting the container will delete the storage and any data on it.
 * Persistent Data:
+
   To deal with persistent data, you need to manage the container filesystem and mount points.
 
 ### File Trees and Mount Points

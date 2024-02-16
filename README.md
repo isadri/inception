@@ -757,4 +757,14 @@ This command creates an empty `tmpfs` device and attaches it to the new containe
 
 ### Docker Volumes
 
+*Docker volumes* are named filesystem trees managed by Docker. All operations on Docker volumes can be accomplished using the `docker volume` subcommand set. Using volumes is a method of decoupling storage from specialized locations on the filesystem that you might specify with bind mounts.
+You can create and inspect volumes by using the `docker volume create` and `docker volume inspect` subcommands. By default, Docker creates volumes by using the `local` volume plugin. The default behavior will create a directory to store the contents of a volume somewhere in a part of the host filesystem under control of the Docker engine. For example, the following command create a volume named `location-example`:
+```docker
+docker volume create --driver local location-example
+```
+and the following command displays the location of the volume host filesystem tree:
+```docker
+docker volume inspect --format '{{json .Mountpoint}}' location-example
+```
+
 # Hands-On

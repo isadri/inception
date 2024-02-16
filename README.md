@@ -716,7 +716,7 @@ This option will forward traffic hitting port 8080 from all host interfaces to p
 
 ### File Trees and Mount Points
 
-Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called *mount points*. A mount point defines the location in the tree, the access properties to the data at that point (for example, writability), and the source of the data mounted at that point (for example, a specific hard disk, USB device, or memory-backed virtual disk).
+Unlike other operating systems, Linux unifies all storage into a single tree. Storage devices such as disk partitions or USB disk partitions are attached to specific locations in that tree. Those locations are called *mount points*. A mount point defines the location in the tree, the access properties to the data at that point (for example, writability), and the source of the data mounted at that point (for example, a specific hard disk, USB device).
 
 ![Screenshot from 2024-02-15 10-29-04](https://github.com/isadri/inception/assets/116354167/e515cc82-72c1-461a-8855-0e98933d673e)
 
@@ -729,5 +729,11 @@ The three most common types of storage mounted into containers:
   * Docker volumes
 
 All three types of mount points can be created using the `--mount` flag on the `docker run` and `docker create` subcommands.
+
+### Bind Mounts
+
+*Bind mounts* are mount points used to remount parts of a filesystem tree onto other locations. When working with containers, bind mounts attach a user-specified location on the host filesystem to a specific point in a container file tree. Bind mounts are useful when the host provides a file or directory that is needed by a program running in a container, or when that containerized program produces a file or log that is processed by users or programs running outside containers.
+The problem with bind mounts is that they tie otherwise portable container descriptions to the filesystem of a specific host. If a container description depends on content at a specific location on the host filesystem, that description isn't protable to host where the content is unavailable or available in some other location.
+
 
 # Hands-On

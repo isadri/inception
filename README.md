@@ -716,13 +716,13 @@ This option will forward traffic hitting port 8080 from all host interfaces to p
 
 There are two main categories of data: persistent and non-persistent.
 Persistent is the data we need to keep. *Non-persisten* is the data we don't need to keep.
-* Non-persistent Data:
+* ***Non-persistent Data:***
 
   To deal with non-persistent data, Every Docker container gets its own non-persistent storage. When a container is launched from an image, Docker mounts a read-write filesystem on top of any layers of the image that the container was created from. This is where whatever processes we want our container to run will execute.
 When Docker first starts a container, the initial read-write layer is empty. As changes occur, they are applied to this layer; for example, if you want to change a file, then that file will be copied from the read-only layer below into the read-write layer. The read-only version of the file will still exist but is now hidden underneath the copy.
 This pattern is traditionally called *copy on write*. Each read-only layer is read-only, this image never changes. When a container is created, Docker builds from the stack of images and then adds the read-write layer on top. That layer, combined with the knowledge of the image layers below it and some configuration data, form the container.
 As a result, deleting the container will delete the storage and any data on it.
-* Persistent Data:
+* ***Persistent Data:***
 
   To deal with persistent data, you need to manage the container filesystem and mount points.
 

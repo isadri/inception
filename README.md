@@ -762,7 +762,11 @@ You can create and inspect volumes by using the `docker volume create` and `dock
 ```docker
 docker volume create --driver local location-example
 ```
-and the following command displays the location of the volume host filesystem tree:
+Check that the volume has been created by using the `docker volume ls` command
+
+![Screenshot from 2024-02-16 16-09-51](https://github.com/isadri/inception/assets/116354167/d9e32761-5697-4fbe-b64e-02222bfab5dc)
+
+The following command displays the location of the volume host filesystem tree:
 ```docker
 docker volume inspect --format '{{json .Mountpoint}}' location-example
 ```

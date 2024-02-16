@@ -773,4 +773,14 @@ docker volume inspect --format '{{json .Mountpoint}}' location-example
 A *volume* is a tool for sharing data that has a scope of life cycle that's independent of a single container.
 Images are appropriate for packaging and distributing relatively static files such as programs, volumes hold dynamic data or specializations. This distinction makes images reusable and data simple to share. This is why volumes provide container-independent data management.
 
+If you want to delete a volume use the `docker volume rm <volume-name>` command, (`<volume-name>` is the name of the volume you want to delete). For example, to delete the `location-example` volume that we created, use
+```docker
+docker volume rm location-example
+```
+List the volumes using `docker volume ls` command again
+
+![Screenshot from 2024-02-16 16-15-27](https://github.com/isadri/inception/assets/116354167/df8b1f84-ad3c-4685-aada-9a1b8584122f)
+
+The volume has been deleted!
+
 # Hands-On

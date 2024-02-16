@@ -766,5 +766,7 @@ and the following command displays the location of the volume host filesystem tr
 ```docker
 docker volume inspect --format '{{json .Mountpoint}}' location-example
 ```
+A *volume* is a tool for sharing data that has a scope of life cycle that's independent of a single container.
+Images are appropriate for packaging and distributing relatively static files such as programs, volumes hold dynamic data or specializations. This distinction makes images reusable and data simple to share. This is why volumes provide container-independent data management.
 
 # Hands-On

@@ -781,6 +781,10 @@ The following command displays the location of the volume host filesystem tree:
 ```docker
 docker volume inspect --format '{{json .Mountpoint}}' location-example
 ```
+
+> [!NOTE]
+> By default, Docker creates new volumes with the built-in `local` driver. Volumes create with this driver are only available to containers on the same Docker host as the volume.
+
 A *volume* is a tool for sharing data that has a scope of life cycle that's independent of a single container.
 Images are appropriate for packaging and distributing relatively static files such as programs, volumes hold dynamic data or specializations. This distinction makes images reusable and data simple to share. This is why volumes provide container-independent data management.
 
@@ -835,7 +839,7 @@ The `cont1_file` that was created by the `cont1` container, that has been delete
 
 ![Screenshot from 2024-02-16 16-49-40](https://github.com/isadri/inception/assets/116354167/0f1ba1c1-ab19-4fea-8d84-9a32007fd1cd)
 
-This content is the content you wrote in the `cont1` container. So, even we have deleted the `cont1` container, the `cont1_file` file didn't deleted because we've mounted it with a volume, and volumes are independent from containers life cycles.
+This content is the content you wrote in the `cont1` container. So, even we have deleted the `cont1` container, the `cont1_file` file didn't deleted because we've mounted it with a volume, and volumes are independent from a container lifecycle.
 
 ![Screenshot from 2024-02-17 10-28-30](https://github.com/isadri/inception/assets/116354167/755f377f-8abf-428e-b431-bf7e89a8f6eb)
 

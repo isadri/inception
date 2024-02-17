@@ -839,5 +839,6 @@ This content is the content you wrote in the `cont1` container. So, even we have
 
 ![Screenshot from 2024-02-17 10-28-30](https://github.com/isadri/inception/assets/116354167/755f377f-8abf-428e-b431-bf7e89a8f6eb)
 
+Now type `exit` to exit and delete the `cont2` container.
 
 # Hands-On

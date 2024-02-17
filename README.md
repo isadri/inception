@@ -763,7 +763,12 @@ This command creates an empty `tmpfs` device and attaches it to the new containe
 
 ### Docker Volumes
 
-*Docker volumes* are named filesystem trees managed by Docker. All operations on Docker volumes can be accomplished using the `docker volume` subcommand set. Using volumes is a method of decoupling storage from specialized locations on the filesystem that you might specify with bind mounts.
+*Docker volumes* are named filesystem trees managed by Docker.
+
+> [!NOTE]
+> Bind mounts don't have a dedicated manager like volumes. Instead, they rely on the operating system of the Docker host for management. Docker simply establishes the link between the host directory and the container directory, but the underlying filesystem operations are handled by the host's OS.
+
+All operations on Docker volumes can be accomplished using the `docker volume` subcommand set. Using volumes is a method of decoupling storage from specialized locations on the filesystem that you might specify with bind mounts.
 You can create and inspect volumes by using the `docker volume create` and `docker volume inspect` subcommands. By default, Docker creates volumes by using the `local` volume plugin. The default behavior will create a directory to store the contents of a volume somewhere in a part of the host filesystem under control of the Docker engine. For example, the following command create a volume named `location-example`:
 ```docker
 docker volume create --driver local location-example
@@ -788,5 +793,51 @@ List the volumes using `docker volume ls` command again
 ![Screenshot from 2024-02-16 16-15-27](https://github.com/isadri/inception/assets/116354167/df8b1f84-ad3c-4685-aada-9a1b8584122f)
 
 The volume has been deleted!
+
+### Using Volumes With Containers
+
+Let's see docker volumes in action. First, create a volume using
+```docker
+docker volume create user-volume
+```
+Check that the volume has been created
+
+![Screenshot from 2024-02-16 16-35-21](https://github.com/isadri/inception/assets/116354167/d7794bdf-41e4-4c4f-9816-1fd384ff650b)
+
+Now, create a new container and mount the `user-volume` volume into the container
+```docker
+docker run -it --rm --name cont1 --volume user-volume:/app debian bash
+```
+> [!NOTE]
+> The `--rm` option tells docker that when this container stops, delete it.
+
+We are now inside the `cont1` container. If the directory that we mount the volume with does not exist, Docker will create it (type `ls -p` command and you'll see the `app/` directory). `cd` into the `app/` directory and create a file and write to it some contents. For example
+```bash
+cat > cont1_file << EOF
+> cont1 was here
+> EOF
+```
+`cat` the file to see what you write to it.
+
+![Screenshot from 2024-02-16 16-43-58](https://github.com/isadri/inception/assets/116354167/04a92256-e1ca-47da-b137-d5ffc1f7ef74)
+
+Now, exit from the container by typing `exit`.
+Since we use the `--rm` option when we run the container, the `cont1` is deleted now. Type `docker ps -a` to check.
+Let's create another container and mount the `user-volume` into with.
+```docker
+docker run -it --rm --name cont2 --volume user-volume:/app debian bash
+```
+If you type `ls -p` you'll see that the `app/` directory is exist. `cd` to it and type `ls` again.\
+
+![Screenshot from 2024-02-16 16-48-05](https://github.com/isadri/inception/assets/116354167/722a74ec-a66a-45f0-83ea-74426c5deb4d)
+
+The `cont1_file` that was created by the `cont1` container, that has been deleted, is also exist. Check its content by using `cat` command.
+
+![Screenshot from 2024-02-16 16-49-40](https://github.com/isadri/inception/assets/116354167/0f1ba1c1-ab19-4fea-8d84-9a32007fd1cd)
+
+This content is the content you wrote in the `cont1` container. So, even we have deleted the `cont1` container, the `cont1_file` file didn't deleted because we've mounted it with a volume, and volumes are independent from containers life cycles.
+
+![Screenshot from 2024-02-17 10-28-30](https://github.com/isadri/inception/assets/116354167/755f377f-8abf-428e-b431-bf7e89a8f6eb)
+
 
 # Hands-On

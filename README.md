@@ -17,6 +17,7 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
    * [Images](#Images)
    * [Containers](#Containers)
    * [Networking](#Networking)
+   * [Security](#Security)
 
 2. [Hands-On](#Hands\-On)
 
@@ -845,5 +846,10 @@ This content is the content you wrote in the `cont1` container. So, even we have
 
 Now type `exit` to exit and delete the `cont2` container.
 We'll work with volumes more in the [Hands-On part](#Hands\-On).
+
+## Security
+
+Docker on Linux supports some Linux isolation features that ensure softwares running on containers only uses the computing resources and access the data you expect. And also Docker adds some of its own excellent security technologies, which i will not cover in this article.
+
 
 # Hands-On

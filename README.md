@@ -849,6 +849,9 @@ We'll work with volumes more in the [Hands-On part](#Hands\-On).
 
 ## Security
 
+Though we usually talk about Linux containers as a single entity, they are, in fact, implemented through several separate mechanisms built into the Linux kernel that all work together: control groups (cgroups), namespaces, and SELinux or AppArmor, all of which serve to contain the process. cgroups provide for resource limits, namespaces allow for processes to use identically named resources and isolate them from each other's view of the system, and SELinux or AppArmor provides strong security isolation.
+When running Docker, you can think of your computer as a hotel. Each container that you run is an individual room with one or more guests (your processes) in it. Namespacess make up the walls of the room, and ensure that processes cannot interact with neighboring processes in any ways that they are not specifically allowed to. Control groups are like the floor and ceiling of the room, trying to ensure that the inhabitants have the resources they need to enjoy their stay, without allowing them to use resources or space reserved for others. Finally, SELinux and AppArmor are a bit like hotel security, ensuring that even if something unexpected or untoward happens, it is unlikely to cause much more than the headache of filling out paperwork and filing an incident report.
+
 Docker on Linux supports some Linux isolation features that ensure softwares running on containers only uses the computing resources and access the data you expect. And also Docker adds some of its own excellent security technologies, which i will not cover in this article.
 
 

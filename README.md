@@ -870,9 +870,7 @@ Docker uses this primarily to make your container look like it has its own entir
 
 * **UTS namespace**:
 UTS (Unix Timesharing System) namespace gives your container its own hostname and domain name. For example, display the hostname of your Docker host using the `hostname` command, and then run an interactive container and display its hostname as well using the same command (`hostname`).
-
 ![Screenshot from 2024-02-21 11-20-14](https://github.com/isadri/inception/assets/116354167/723dee07-5d7c-4671-8a04-25b98d76d047)
-
 That is the container's ID!
 It's the namespace that makes that happen.
 

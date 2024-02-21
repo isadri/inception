@@ -856,6 +856,26 @@ When running Docker, you can think of your computer as a hotel. Each container t
 
 *Control groups*, or *cgroups* for short, allow you to set limits on resources for processes and their children. This is the mechanism that Docker uses to control limits on memory, swap, CPU, and storage and network I/O resources. Every Docker container is assigned a cgroup that is unique to that container. All of the processes in the container will be in the same group. This means that it's easy to control resources for each container as a whole without worrying about what might be running. If a container is redeployed with new processes added, you can have Docker assign the same policy and it will apply to all of them.
 
+### Namespaces
+
+Inside each container, you see a filesystem, network interfaces, disks, and other resources that all appear to be unique to the container despite sharing the kernel with all the other processes on the system. t's what makes your container fell like a machine all by itself. The way this is implemented in the kernel is with *namespaces*. Namespaces take a traditionally global resource and present the container with its own unique and unshared version of that resource.
+Rather than just having a single namespace, however, containers have a namespace on each of the six types of resources that are currently namespaced in the kernel: MNT, UTS, IPC, PID, NET and USER namespaces.
+
+![Screenshot from 2024-02-21 11-13-31](https://github.com/isadri/inception/assets/116354167/c4177257-7c71-46ad-a97f-48ed537b7e7b)
+
+Essentially when you talk about a container, you're talking about a number of different namespaces that Docker sets up on your behalf. So what do they all do?
+
+* **MNT (mount) namespace**:
+Docker uses this primarily to make your container look like it has its own entire filesystem namespace. This means every container can have its own `/etc`, `/var`, `/dev` and other important filesystem constructs. Processes inside a container cannnot access the filesystems on the host or other containers, they can only see and access their own isolated filesystem. If you use `docker exec` to get into a container, you'll see a filesystem rooted on `/`. But we know that this isn't the actual root partition of the system. It's the mount namespace that makes that possible.
+
+* **UTS namespace**:
+UTS (Unix Timesharing System) namespace gives your container its own hostname and domain name. For example, display the hostname of your Docker host using the `hostname` command, and then run an interactive container and display its hostname as well using the same command (`hostname`).
+
+![Screenshot from 2024-02-21 11-20-14](https://github.com/isadri/inception/assets/116354167/723dee07-5d7c-4671-8a04-25b98d76d047)
+
+That is the container's ID!
+It's the namespace that makes that happen.
+
 Docker on Linux supports some Linux isolation features that ensure softwares running on containers only uses the computing resources and access the data you expect. And also Docker adds some of its own excellent security technologies, which i will not cover in this article.
 
 

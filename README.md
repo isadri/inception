@@ -54,7 +54,7 @@ In the container model, the container is roughly analogous to the VM. A major di
 
 Modern containers started in the Linux world and are the product of an immense amount of work from a wide variety of people over a long period of time.
 
-Some of the major technologies that enabled the massive growth of containers in recent years include, [**kernel namespaces**](###Namespaces), [**control groups**](###cgroups) (or **cgroups**), [**capabilities**](#Capabilities), and of course **Docker**.
+Some of the major technologies that enabled the massive growth of containers in recent years include, [**kernel namespaces**](#Namespaces), [**control groups**](#cgroups) (or **cgroups**), [**capabilities**](#Capabilities), and of course **Docker**.
 
 Despite all of this, containers remained complex and outside of the reach of most organizations. It wasn’t until Docker came along that containers were effectively democratized and accessible to the masses. Docker was the magic that made containers simple!
 

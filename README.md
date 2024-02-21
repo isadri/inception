@@ -133,7 +133,7 @@ The *Docker engine* (or just *Docker*) is the core software that runs and manage
 
 The major components that make up Docker are the Docker daemon, the build system, *containerd*, *runc*, and various plugins such networking and volumes.Together, these create and run containers.
 
-![Screenshot from 2024-02-08 14-51-29](https://github.com/isadri/inception/assets/116354167/df6af995-5252-4e1e-97d4-4a04cf5bef0e)
+![Screenshot from 2024-02-21 17-57-37](https://github.com/isadri/inception/assets/116354167/c1c833dc-38a0-439f-afef-ef4272b47e31)
 
 ### Client/Server Model
 

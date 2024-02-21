@@ -865,7 +865,7 @@ Rather than just having a single namespace, however, containers have a namespace
 
 Essentially when you talk about a container, you're talking about a number of different namespaces that Docker sets up on your behalf. So what do they all do?
 
-* **MNT (mount) namespace**:
+* **MNT (Mount) namespace**:
 
 Docker uses this primarily to make your container look like it has its own entire filesystem namespace. This means every container can have its own `/etc`, `/var`, `/dev` and other important filesystem constructs. Processes inside a container cannnot access the filesystems on the host or other containers, they can only see and access their own isolated filesystem. If you use `docker exec` to get into a container, you'll see a filesystem rooted on `/`. But we know that this isn't the actual root partition of the system. It's the mount namespace that makes that possible.
 
@@ -877,6 +877,30 @@ UTS (Unix Timesharing System) namespace gives your container its own hostname an
 
 That is the container's ID!
 It's the namespace that makes that happen.
+
+* **IPC (Inter-Process Communication) namespace**:
+
+Docker uses the *ipc* namespace for shared memory access within a container. It also isolates the container from shared memory outside the container.
+
+* **PID namespace**:
+
+Docker uses the *pid* namespace to provide isolated process tree for each container. This means every container gets its own PID 1. It also means one container cannot see or access the processes running in other containers. Nor can a container see or access the processes running on the host.
+
+* **NET (Network) namespace**:
+
+This is what allows your container to have its own network devices, ports, and so on. When you run `docker ps` and see the bound ports for your container, you are seeing ports from both namespaces. Inside the container, your *nginx* might be bound to port 80, but that's on the namespaced network interface. This namespace makes it possible to have what seems to be a completely separate network stack for your container.
+
+* **USER namespace**:
+
+These provide isolation between the user and group IDs inside a container and those on the Docker host. A new user inside a container is not a new on the Docker host's main namespace, and vice versa. For example, UID 0 (*root*) in a user namespace is not the same thing as UID 0 on the host. This namespace maps users inside the container to different users on the Linux host.
+
+
+
+
+
+
+
+
 
 Docker on Linux supports some Linux isolation features that ensure softwares running on containers only uses the computing resources and access the data you expect. And also Docker adds some of its own excellent security technologies, which i will not cover in this article.
 

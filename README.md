@@ -2,7 +2,7 @@
 
 ## Notes about this article
 
-All the information provided here is from following books: [**Docker Deep Dive by Nigel Poulton**](https://vk.com/doc281151819_663610256?hash=IkgbhjPqBezQ9si246ccWxj0Iv0ogZTLBuEk8ekWdOk), [**Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias**](https://dl.ebooksworld.ir/motoman/Docker.Up.and.Running.Shipping.Reliable.Containers.in.Production.2nd.Edition.www.EBooksWorld.ir.pdf), [**The Docker Book by James Turnbull**](https://github.com/sudhabharadwajm/the-best-docker-books/blob/master/books/The%20Docker%20Book%20-%20James%20Turnbull%20-%20v17.03.0.pdf) and [**Docker in Action, Second Edition by Jeffrey Nickoloff and Stephen Kuenzli**](https://alek772.github.io/Books/Docker%20in%20Action%20Second%20Edition.pdf).
+All the information provided here is from the following books: [**Docker Deep Dive by Nigel Poulton**](https://vk.com/doc281151819_663610256?hash=IkgbhjPqBezQ9si246ccWxj0Iv0ogZTLBuEk8ekWdOk), [**Docker: Up & Running: Shipping Reliable Containers in Production by Sean P. Kane, Karl Matthias**](https://dl.ebooksworld.ir/motoman/Docker.Up.and.Running.Shipping.Reliable.Containers.in.Production.2nd.Edition.www.EBooksWorld.ir.pdf), [**The Docker Book by James Turnbull**](https://github.com/sudhabharadwajm/the-best-docker-books/blob/master/books/The%20Docker%20Book%20-%20James%20Turnbull%20-%20v17.03.0.pdf) and [**Docker in Action, Second Edition by Jeffrey Nickoloff and Stephen Kuenzli**](https://alek772.github.io/Books/Docker%20in%20Action%20Second%20Edition.pdf).
 
 I'll split this artice into two parts:
   1. [Theory](#Theory)
@@ -33,35 +33,34 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
 
 ### History
 
-Applications are at the heart of businesses. If applications break, businesses break. Sometimes they even go bust. These statements get truer every day.
+Applications are at the heart of businesses. If applications break, businesses break.
 
 Most applications run on servers. In the past we could only run one application per server. The open-systems world of Windows and Linux just didn’t have the technologies to safely and securely run multiple applications on the same server.
 
-As a result, the story went something like this… Every time the business needed a new application, the IT department would buy a new server. Most of the time nobody knew the performance requirements of the new application, forcing the IT department to make guesses when choosing the model and size of the server to buy. As a result, IT did the only thing it could do - it bought big fast servers that cost a lot of money.
+As a result, the story went something like this... Everytime the business needed a new application, the IT department would buy a new server. Most of the time nobody knew the performance requirements of the new application, forcing the IT department to make guesses when choosing the model and size of the server to buy. As a result, IT did the only thing it could do - it bought big fast servers that cost a lot of money.
 
 Amid all of this, VMware, Inc. gave the world a gift - the virtual machine (VM). And almost overnight, the world changed into a much better place. We finally had a technology that allowed us to run multiple business applications safely on a single server.
 
-This was a game changer. IT departments no longer needed to procure a brand-new oversized server every time the business needed a new application. More often than not, they could run new apps on existing servers that were sitting around with spare capacity.
-
 But as great as VMs are, they’re far from perfect. The fact that every VM requires its own dedicated operating system (OS) is a major flaw. Every OS consumes CPU, RAM and other resources that could otherwise be used to power more applications. Every OS needs patching and monitoring. All of this results in wasted time and resources.
 
-The VM model has other challenges too. VMs are slow to boot, and portability isn’t great - migrating and moving VM workloads between hypervisors and cloud platforms is harder than it needs to be.
+The VM model has other challenges too. VMs are slow to boot, and portability isn’t great - migrating and moving VM workloads between hypervisors is harder than it needs to be.
 
 ### Hello Containers!
 
-In the container model, the container is roughly analogous to the VM. A major difference is that containers do not require their own full-blown OS. In fact, all containers on a single host share the host’s OS. This frees up huge amounts of system resources such as CPU, RAM, and storage. It also reduces potential licensing costs and reduces the overhead of OS patching and other maintenance.
+> [!NOTE]
+> I'll talk more about containers in this [section](#Containers).
 
-Containers are also fast to start and ultra-portable. Moving container workloads from your laptop, to the cloud, and then to VMs or bare metal in your data center is a breeze.
+In the container model, the container is roughly analogous to the VM. A major difference is that containers do not require their own full-blown OS. In fact, all containers on a single host share the host’s OS. This frees up huge amounts of system resources such as CPU, RAM, and storage. It also reduces potential licensing costs and reduces the overhead of OS patching and other maintenance.
 
 Modern containers started in the Linux world and are the product of an immense amount of work from a wide variety of people over a long period of time.
 
-Some of the major technologies that enabled the massive growth of containers in recent years include, **kernel namespaces**, **control groups** (or **cgroups**), **capabilities**, and of course **Docker**. To re-emphasize what was said earlier - the modern container ecosystem is deeply indebted to the many individuals and organizations that laid the strong foundations that we currently build on.
+Some of the major technologies that enabled the massive growth of containers in recent years include, [**kernel namespaces**](###Namespaces), [**control groups**](###cgroups) (or **cgroups**), [**capabilities**](#Capabilities), and of course **Docker**.
 
 Despite all of this, containers remained complex and outside of the reach of most organizations. It wasn’t until Docker came along that containers were effectively democratized and accessible to the masses. Docker was the magic that made containers simple!
 
 ### Introducing Docker
 
-Docker is an open-source engine that automates the deployement of applications into containers. It is so powerful technology, and that often means something that comes with a high level of complexity. And, under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server model. There are several pieces sitting behind the Docker API, including *containerd* and *runc* (more about these components is explained later), these are responsible for starting and stopping containers (including building all of the OS constructs such as namespaces and cgroups), but the basic system interaction is a client talking over an API to a server. Underneath this simple exterior, Docker heavily interacts with the kernel.
+Docker is an open-source engine that automates the deployement of applications into containers. It is so powerful technology, and that often means something that comes with a high level of complexity. And, under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server model. There are several pieces sitting behind the Docker API, including *containerd* and *runc* (more about these components is explained [later](#The-Docker-Engine), these are responsible for starting and stopping containers (including building all of the OS constructs such as namespaces and cgroups), but the basic system interaction is a client talking over an API to a server. Underneath this simple exterior, Docker heavily interacts with the kernel.
 
 ### Docker and Windows
 
@@ -74,7 +73,7 @@ Windows desktop and server platforms support both of the following:
 
 *Windows containers* run Windows apps that require a host system with a Windows kernel.
 
-Any Windows host running the WSL 2 ( Windows Subsystem for Linux) can also run Linux containers.
+Any Windows host running the WSL 2 (Windows Subsystem for Linux) can also run Linux containers.
 
 ### Windows containers vs Linux containers
 
@@ -89,7 +88,7 @@ There is currently no such thing as Mac containers. However, you can run Linux c
 ### Container Networking
 
 > [!NOTE]
-> Docker networking has some complexitiy, and we'll deep into it in later section.
+> Docker networking has some complexitiy, and we'll deep into it in this [section](#Networking).
 
 Even though Docker containers are largely made up of processes running on the host system itself, they usually behave quite differently from other processes at the network layer. Docker initially supported a single networking model, but now supports a robust assortment of configurations that handle most application requirements. Most people run their containers in the default configuration, called *bridge mode*.
 
@@ -118,7 +117,7 @@ It’s often the case that many containers share one or more common filesystem l
 Containerized processes are just processes on the Docker server itself. They are running on the same exact instance of the Linux kernel as the host operating system. They even show up in the *ps* output on the Docker server. That is utterly different from a hypervisor, where the depth of process isolation usually includes running an entirely separate instance of the operating system kernel for each virtual machine.
 
 > [!WARNING]
-> By default, many containers use UID 0 to launch processes. Because the container is *contained*, this seems safe, but in reality it isn’t. Because everything is running on the same kernel, many types of security vulnerabilities or simple misconfiguration can give the container’s *root* user unauthorized access to the host’s system resources, files, and processes.
+> By default, many containers use UID 0 (*root*) to launch processes. Because the container is *contained*, this seems safe, but in reality it isn’t. Because everything is running on the same kernel, many types of security vulnerabilities or simple misconfiguration can give the container’s *root* user unauthorized access to the host’s system resources, files, and processes.
 
 ### Containers are Lightweight
 

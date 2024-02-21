@@ -896,7 +896,10 @@ These provide isolation between the user and group IDs inside a container and th
 
 
 
+### Capabilities
 
+Docker can adjust a container's authorization to use individual operating system features. In Linux, these feature authorizations are called *capabilities*. Whenever a process attempts to make a gated system call such as opening a network socket, the capabilities of that process are checked for the required capability. The call will succeed if the process has the required capability, and fail otherwise.
+When you create a new container, Docker drops all capabilities except for an explicit list of capabilities that are necessary and safe to run most applications.
 
 
 

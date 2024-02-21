@@ -894,13 +894,16 @@ This is what allows your container to have its own network devices, ports, and s
 
 These provide isolation between the user and group IDs inside a container and those on the Docker host. A new user inside a container is not a new on the Docker host's main namespace, and vice versa. For example, UID 0 (*root*) in a user namespace is not the same thing as UID 0 on the host. This namespace maps users inside the container to different users on the Linux host.
 
-
-
 ### Capabilities
 
 Docker can adjust a container's authorization to use individual operating system features. In Linux, these feature authorizations are called *capabilities*. Whenever a process attempts to make a gated system call such as opening a network socket, the capabilities of that process are checked for the required capability. The call will succeed if the process has the required capability, and fail otherwise.
 When you create a new container, Docker drops all capabilities except for an explicit list of capabilities that are necessary and safe to run most applications.
 
+### AppArmor and SELinux
+
+Docker works with major Linux MAC (Mandatory Access Control) technologies such as [AppArmor](https://en.wikipedia.org/wiki/AppArmor) and [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux).
+Docker applies default profiles to all new containers. Docker also lets you start containers without policies, as well as giving you the ability to customize policies to meet specific requirements.
+Docker uses [*seccomp*](https://en.wikipedia.org/wiki/Seccomp) to limit the syscalls a container can make to the host's kernel.
 
 
 

@@ -131,7 +131,7 @@ Now let’s talk about the Docker engine. As **Nigel Poulton** mentions in his b
 
 The *Docker engine* (or just *Docker*) is the core software that runs and manages containers. Under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server mode.
 
-The major components that make up Docker are the Docker daemon, the build system, *containerd*, *runc*, and various plugins such networking and volumes.Together, these create and run containers.
+The major components that make up Docker are the Docker daemon, *containerd*, *runc*, and various plugins such networking and volumes.Together, these create and run containers.
 
 ![Screenshot from 2024-02-21 17-57-37](https://github.com/isadri/inception/assets/116354167/c1c833dc-38a0-439f-afef-ef4272b47e31)
 
@@ -152,7 +152,7 @@ Docker is a little different in structure from some other client/server software
 
 ### From LXC to libcontainer
 
-In order to create a container, Docker needs to interact with the kernel. In the past, there was a components called **LXC** that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *control groups* (*cgroups*).
+In order to create a container, Docker needs to interact with the kernel. In the past, there was a component called **LXC** that provides the daemon an access to the fundamental buildings-blocks of containers that existed in the Linux kernel. Things like *namespaces* and *cgroups*.
 
 ![Screenshot from 2024-02-08 15-03-51](https://github.com/isadri/inception/assets/116354167/80ea2722-ee75-4a54-9468-e2eec28e1557)
 
@@ -182,7 +182,7 @@ Before we explain what is *shim*, we need to understand the process of creating 
 
 ### Starting a New Container
 
-you can enter the following command in the Docker CLI to tell the daemon to start a new container based on the *alpine:latest* image.
+you can enter the following command in the Docker CLI (terminal) to tell the daemon to start a new container based on the *alpine:latest* image.
 
 ```bash
 docker container run --name c1 -it alpine:latest sh
@@ -218,11 +218,11 @@ The daemon is capable of pushing and pulling images, implementing the Docker API
 
 An image is read-only package that contains everything you need to run an application. It includes application code, application dependencies, a minimal set of OS constructs, and metadata. A single image can be used to start one or more containers.
 
-You can think of images as similar to classes. You can create one or more objects from a class. Same for images, you can create one or more containers from an image.
+You can think of images as similar to classes in a programming language (such as C++). You can create one or more objects from a class. Same for images, you can create one or more containers from an image.
 
 You get container images by *pulling* them from a *registry*. The most common registry is Docker Hub but others exist. The *pull* operation downloads an image to your local Docker host where Docker can use it to start one or more containers.
 
-Images are made up of multiple *layers* that are stacked on top of each other and represented as a single object, and each identified by a unique hash. Inside of the image is a cut-down operating system (part of the OS) and all of the files and dependencies required to run an application.
+Images are made up of multiple [*layers*](#Images-and-Layers) that are stacked on top of each other and represented as a single object, and each identified by a unique hash. Inside of the image is a cut-down operating system (part of the OS) and all of the files and dependencies required to run an application.
 
 ### Images and containers
 
@@ -296,7 +296,7 @@ Docker takes care of stacking the layers and representing them as a single unifi
 You can see the layers of an image by using the `docker inspect` command, for example, if we inspect the image that we pulled, an output will be displayed, but we only interested in a field names *RootFS*.
 
 > [!NOTE]
-> *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image.
+> *rootfs* is a filesystem that Docker layers on top of another filesystem called *boot filesystem* (*bootfs*). *bootfs* is the base filesystem layer inside of an image, and it resembles the typical Linux/Unix boot filesystem.
 
 Remember, the output will be different in your Docker host.
 
@@ -315,6 +315,9 @@ This trimmed output shows one layer with its hash.
 docker images --digests <image>
 ```
 
+> [!NOTE]
+> Images share layers. This means when you pull a new image, if a layer of this image is already installed by a previously pulled image, the layer won't be installed again.
+
 ### Multi-Architecture Images:
 
 One question could be on your mind: **How does Docker know that it will install an image on Linux x64, on Windows x64 or on different versions of ARM?** There are two constructs that make this possible:
@@ -330,7 +333,7 @@ For example, the *golang* image may have the following **manifest list** and **m
 
 The **manifest list** has entries for each architecture the image supports.
 
-For example, when Docker pulls an image on Linux on ARM,  Docker makes the relevant calls to Docker Hub, and if a **manifest list** exists for the image, it will be parsed to see if an entry exists for Linux on ARM. If it exists, the **manifest** for the Linux ARM image is retrieved. Each layer is then pulled from Docker Hub and assembled on the Docker host.
+For example, when Docker pulls an image on Linux on ARM, Docker makes the relevant calls to Docker Hub, and if a **manifest list** exists for the image, it will be parsed to see if an entry exists for Linux on ARM. If it exists, the **manifest** for the Linux ARM image is retrieved. Each layer is then pulled from Docker Hub and assembled on the Docker host.
 
 You can use the `docker manifest inspect <image> | grep ‘architecture\|os` to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
 
@@ -338,7 +341,7 @@ You can use the `docker manifest inspect <image> | grep ‘architecture\|os` to 
 
 ## Containers
 
-A container is the runtime instance of an image. In the same way that you can start a virtual machine (VM) from a virtual machine template, you start one or more containers from a single image.
+A container is the runtime instance of an image (i.e., a running image). In the same way that you can start a virtual machine (VM) from a virtual machine template, you start one or more containers from a single image.
 
 ![Screenshot from 2024-02-10 16-31-08](https://github.com/isadri/inception/assets/116354167/9b93cbf6-3266-45fb-90e4-bf2b3c5c0457)
 
@@ -358,11 +361,11 @@ At a high level, hypervisors perform **hardware virtualization** - they carve up
 > [!NOTE]
 > Containers start a lot faster than VMs because they only have to start the application - the kernel is already up and running on the host. In the VM model, each VM needs to boot a full OS before it can start the app.
 
-Now we know the difference between containers and VMs, let's see how to creating a container?
+Now we know the difference between containers and VMs, let's see how to create a container?
 
 ### Creating containers
 
-To start a container, we use the `docker run` command. `docker run` wraps two separate steps into one. The first thing it does is create a container from the underlying image. You use the `docker create` to do this. The second thing `docker run` does is execute the container, which you can also do separately with the `docker start` command.
+To start a container, we use the `docker run` command. `docker run` wraps two separate steps into one. The first thing it does is create a container from the underlying image. You can use the `docker create` to do this. The second thing `docker run` does is execute the container, which you can also do separately with the `docker start` command.
 For example, lets run a new container from a Debian image.
 
 ![Screenshot from 2024-02-10 17-37-31](https://github.com/isadri/inception/assets/116354167/f80e2961-248f-497f-973b-3ea768635ac0)
@@ -373,7 +376,7 @@ For example, lets run a new container from a Debian image.
 Let's look at each piece of this command:
   1. First, we told Docker to run a command using `docker run`.
   2. In the `-it` flags, the `-i` flag keeps **STDIN** open from the container, even if we're not attached to it. This persistent standard input is one half of what we need for an interactive shell. The `-t` flag is the other half and tells Docker to assign a pseudo-tty to the container we're about to create. This provides us with an interactive shell in the new container.
-  3. Next, we to Docker which image to use to create a container, in this case the **debian** image.
+  3. Next, we told Docker which image to use to create a container, in this case the **debian** image.
 So what was happening in the background here? Firstly, Docker checked locally for the **debian** image. If it can't find the image on our local Docker host, it will reach out to the Docker Hub registry, and look for it there. Once Docker has found the image, it downloaded the image and stored it on the local host.
 Docker then used this image to create a new container inside a filesystem. The container has a network, IP address, and a bridge interface to talk to the local host. Finally, we told Docker which command to run in our new container, in this case launching a Bash shell with the `/bin/bash` command.
 When the container had been created, Docker ran the `/bin/bash` command inside it, and the container's shell was presented to us.
@@ -410,6 +413,7 @@ The `ps` command does not exist in the container, so how do we install it? Well,
 ```bash
 apt-get update && apt-get install procps
 ```
+
 Now, after we installed the `ps` command, we can use it to see its running processes.
 
 ![Screenshot from 2024-02-10 18-13-44](https://github.com/isadri/inception/assets/116354167/5634f2a3-5c9e-4f47-8999-e08f07afe0f4)
@@ -420,18 +424,18 @@ Now the container has stopped running. The container only runs for as long as th
 > [!NOTE]
 > Containers run until the main process exits.
 
-If we use the `docker ps` command, we will not the container that we were in it.
+If we use the `docker ps` command, we will not see the container that we were inside of it.
 
 ![Screenshot from 2024-02-10 18-19-45](https://github.com/isadri/inception/assets/116354167/6bb0f077-d125-4938-b8c7-a7f3cc283a89)
 
-But the container still exits, it is just stopped. Add the `-a` flag to `docker ps` command to show all containers, no matter if they running or are stopped.
+But the container still exits, it is just stopped. Add the `-a` flag to `docker ps` command to show all containers, no matter if they are running or are stopped.
 
 ![Screenshot from 2024-02-10 18-22-11](https://github.com/isadri/inception/assets/116354167/f8acb198-610e-492f-863a-9f0819d975e1)
 
 The *STATUS* field says that the container is stopped 2 minutes ago with 0 as the exit status.
 
 > [!NOTE]
-> If you want to specify a particular name of a container in place of the automatically name that Docker generate, you can use the `--name` flag like this: `docker run --name container_1 -it debian /bin/bash`.
+> If you want to specify a particular name of a container in place of the automatically name that Docker generates, you can use the `--name` flag like this: `docker run --name container_1 -it debian /bin/bash`.
 > Container names are useful to help us identify and build logical connections between containers and applications, as we will see later.
 > And remember that the names are unique. You cannot create two containers with the same name, you need to delete the previous container with the same name before you can create a new one.
 
@@ -439,10 +443,13 @@ The *STATUS* field says that the container is stopped 2 minutes ago with 0 as th
 
 Our *container_1* container is stopped, how do we bring it back to life?
 To restart our stopped container we can use the `docker start` command with the name of our container or its ID.
+
 ```bash
 docker start container_1
 ```
+
 or
+
 ```bash
 docker start 0af8722f3fea
 ```
@@ -458,13 +465,12 @@ Our container is running now, but how can we go inside of it (or more technicall
 
 ### Attaching to a container
 
-Our container is restarted with the same options we had specified when we launched it with the `docker run` command. So there is an interactive session waiting on our running container. We can reattach to that session using the `docker attack` command.
+Our container is restarted with the same options we had specified when we launched it with the `docker run` command. So there is an interactive session waiting on our running container. We can reattach to that session using the `docker attach` command.
 
 ```bash
 docker attach container_1
 ```
-And we will be brought back to our container's Bash prompt.
-If we exit this shell, the container will be stopped again.
+And we will be brought back to our container's Bash prompt. If we exit this shell, the container will be stopped again.
 
 ### Running containers in the background (daemonized containers)
 
@@ -474,8 +480,10 @@ Let's start a daemonized container.
 ![Screenshot from 2024-02-10 18-49-29](https://github.com/isadri/inception/assets/116354167/358ecff7-a7af-4d2a-91ad-989b1f269837)
 
 Here, we've used the `docker run` command with the `-d` flag to tell Docker to detach the container to the background (you can use the `--detach` flag for the same effect).
+
 We've also specified a `while` loop as our container command. Our loop will `echo` `hello inception` over and over again until the container is stopped or the process stops.
-You'll see that, instead of being attached to a shell like the case in *container_1* container, the `docker run` command has instead returned the container's ID and returned us to our command prompt. This is because we told Docker to run this container as a daemon using the `-d` falg.
+
+You'll see that, instead of being attached to a shell like the case in *container_1* container, the `docker run` command has instead returned the container's ID and returned us to our command prompt on the Docker host. This is because we told Docker to run this container as a daemon using the `-d` falg.
 Now if we run `docker ps`, we see that the *container_2* is running.
 
 ![Screenshot from 2024-02-10 18-55-03](https://github.com/isadri/inception/assets/116354167/3531245d-16bb-4b60-bec0-55bf16d5eeda)
@@ -487,15 +495,21 @@ You can use the `docker logs` command to fetche the logs of a container.
 ### Running a process inside a running container
 
 You can run additional processes inside our containers using the `docker exec` command.
+
 There are two types of commands we can run inside a container: background and interactive. Background tasks run inside the container without interaction and interactive tasks remain in the foreground.
+
 For example, to create a file in the background inside the container, use the following command.
+
 ```bash
 docker exec -d container_2 touch my_file
 ```
+
 We can also run interactive tasks like opening a shell inside our container_2 container.
+
 ```bash
 docker exec -it container_2 /bin/bash
 ```
+
 This command will create a new bash session inside the container.
 
 ### Stopping a daemonized container

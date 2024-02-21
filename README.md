@@ -127,9 +127,9 @@ The lightness of containers means that you can use them for situations where cre
 
 ## The Docker Engine
 
-Now let’s talk about the Docker engine. This technical stuff is not needed in order to use Docker, but as **Nigel Poulton** mentions in his book: *to be a real master of anything, you need to understand what’s going on under the hood*. So what’s the Docker engine?
+Now let’s talk about the Docker engine. As **Nigel Poulton** mentions in his book: *to be a real master of anything, you need to understand what’s going on under the hood*. So what’s the Docker engine?
 
-The *Docker engine* (or just *Docker*) is the core software that runs and manages containers. Under the hood, Docker if fairly complex, however, its fundamental user-facing structure is indeed a simple client/server mode.
+The *Docker engine* (or just *Docker*) is the core software that runs and manages containers. Under the hood, Docker is fairly complex, however, its fundamental user-facing structure is indeed a simple client/server mode.
 
 The major components that make up Docker are the Docker daemon, the build system, *containerd*, *runc*, and various plugins such networking and volumes.Together, these create and run containers.
 

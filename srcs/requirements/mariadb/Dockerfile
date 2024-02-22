@@ -8,4 +8,4 @@ COPY script.sh .
 
 RUN bash script.sh
 
-CMD ["mysqld_safe"]
+CMD ["mysqld"]

@@ -967,6 +967,8 @@ Rather than just having a single namespace, however, containers have a namespace
 
 Essentially when you talk about a container, you're talking about a number of different namespaces that Docker sets up on your behalf. So what do they all do?
 
+$${\color{red}Red}$$
+
 * **MNT (Mount) namespace**:
 
 Docker uses this primarily to make your container looks like it has its own entire filesystem namespace. This means every container can have its own `/etc`, `/var`, `/dev` and other important filesystem constructs. Processes inside a container cannnot access the filesystems on the host or other containers, they can only see and access their own isolated filesystem. If you use `docker exec` to get into a running container, you'll see a filesystem rooted on `/`. But we know that this isn't the actual root partition of the system. It's the mount namespace that makes that possible.

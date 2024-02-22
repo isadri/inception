@@ -818,14 +818,15 @@ Unlike other operating systems, Linux unifies all storage into a single tree. St
 ![Screenshot from 2024-02-15 10-29-04](https://github.com/isadri/inception/assets/116354167/e515cc82-72c1-461a-8855-0e98933d673e)
 
 Mount points allow software and users to use the file tree in a Linux environment without knowing exactly how that tree is mapped into specific storage devices.
-Every container has something called a *MNT namespace* (I'll explain *namespaces* later) and a unique file tree root. The image that a container is created from is mounted at that container's file tree root, or at the / point, and that every container has a different set of mount points.
+Every container has something called a *MNT namespace* (I'll explain [*namespaces*](#Namespaces) later) and a unique file tree root. The image that a container is created from is mounted at that container's file tree root, or at the `/` point, and that every container has a different set of mount points.
 Logic follows that if different storage devices can be mounted at various points in a file tree, we can mount nonimage-related storage at other points in a container file tree. That is exactly how containers get access to storage on the host filesystem and share storage between containers.
 The three most common types of storage mounted into containers:
+
   * Bind mounts
   * In-memory storage
   * Docker volumes
 
-All three types of mount points can be created using the `--mount` flag on the `docker run` and `docker create` subcommands.
+All three types of mount points can be created using the `--mount` flag on the `docker run` and `docker create` commands.
 
 ### Bind Mounts
 
@@ -835,9 +836,11 @@ The problem with bind mounts is that they tie otherwise portable container descr
 ### In-Memory Storage
 
 Most service software and web applications use private key files, database passwords, API key files, or other sensitive configuration files, and need upload buffering space. In these cases, it is important that you never include those types of files in an image or write them to disk. Instead, you should use in-memory storage. For example, to run a container with in-memory storage as its mount type, you can set the type as follows.
-```docker
+
+```bash
 docker run --mount type=tmpfs,dst=/tmp <image>
 ```
+
 This command creates an empty `tmpfs` device and attaches it to the new container's file tree at /tmp. Any files created under this file tree will be written to memory instead of disk.
 
 ### Docker Volumes
@@ -847,17 +850,21 @@ This command creates an empty `tmpfs` device and attaches it to the new containe
 > [!NOTE]
 > Bind mounts don't have a dedicated manager like volumes. Instead, they rely on the operating system of the Docker host for management. Docker simply establishes the link between the host directory and the container directory, but the underlying filesystem operations are handled by the host's OS.
 
-All operations on Docker volumes can be accomplished using the `docker volume` subcommand set. Using volumes is a method of decoupling storage from specialized locations on the filesystem that you might specify with bind mounts.
-You can create and inspect volumes by using the `docker volume create` and `docker volume inspect` subcommands. By default, Docker creates volumes by using the `local` volume plugin. The default behavior will create a directory to store the contents of a volume somewhere in a part of the host filesystem under control of the Docker engine. For example, the following command create a volume named `location-example`:
-```docker
+All operations on Docker volumes can be accomplished using the `docker volume` subcommands set. Using volumes is a method of decoupling storage from specialized locations on the filesystem that you might specify with bind mounts.
+
+You can create and inspect volumes by using the `docker volume create` and `docker volume inspect` subcommands. By default, Docker creates volumes by using the `local` volume plugin. The default behavior will create a directory to store the contents of a volume somewhere in a part of the host filesystem under control of the Docker engine. For example, the following command creates a volume named `location-example`:
+
+```bash
 docker volume create --driver local location-example
 ```
+
 Check that the volume has been created by using the `docker volume ls` command
 
 ![Screenshot from 2024-02-16 16-09-51](https://github.com/isadri/inception/assets/116354167/d9e32761-5697-4fbe-b64e-02222bfab5dc)
 
 The following command displays the location of the volume host filesystem tree:
-```docker
+
+```bash
 docker volume inspect --format '{{json .Mountpoint}}' location-example
 ```
 
@@ -865,12 +872,15 @@ docker volume inspect --format '{{json .Mountpoint}}' location-example
 > By default, Docker creates new volumes with the built-in `local` driver. Volumes create with this driver are only available to containers on the same Docker host as the volume.
 
 A *volume* is a tool for sharing data that has a scope of life cycle that's independent of a single container.
+
 Images are appropriate for packaging and distributing relatively static files such as programs, volumes hold dynamic data or specializations. This distinction makes images reusable and data simple to share. This is why volumes provide container-independent data management.
 
 If you want to delete a volume use the `docker volume rm <volume-name>` command, (`<volume-name>` is the name of the volume you want to delete). For example, to delete the `location-example` volume that we created, use
-```docker
+
+```bash
 docker volume rm location-example
 ```
+
 List the volumes using `docker volume ls` command again
 
 ![Screenshot from 2024-02-16 16-15-27](https://github.com/isadri/inception/assets/116354167/df8b1f84-ad3c-4685-aada-9a1b8584122f)
@@ -880,41 +890,50 @@ The volume has been deleted!
 ### Using Volumes With Containers
 
 Let's see docker volumes in action. First, create a volume using
-```docker
+
+```bash
 docker volume create user-volume
 ```
+
 Check that the volume has been created
 
 ![Screenshot from 2024-02-16 16-35-21](https://github.com/isadri/inception/assets/116354167/d7794bdf-41e4-4c4f-9816-1fd384ff650b)
 
 Now, create a new container and mount the `user-volume` volume into the container
+
 ```docker
 docker run -it --rm --name cont1 --volume user-volume:/app debian bash
 ```
+
 > [!NOTE]
 > The `--rm` option tells docker that when this container stops, delete it.
 
 We are now inside the `cont1` container. If the directory that we mount the volume with does not exist, Docker will create it (type `ls -p` command and you'll see the `app/` directory). `cd` into the `app/` directory and create a file and write to it some contents. For example
+
 ```bash
 cat > cont1_file << EOF
 > cont1 was here
 > EOF
 ```
+
 `cat` the file to see what you write to it.
 
 ![Screenshot from 2024-02-16 16-43-58](https://github.com/isadri/inception/assets/116354167/04a92256-e1ca-47da-b137-d5ffc1f7ef74)
 
 Now, exit from the container by typing `exit`.
+
 Since we use the `--rm` option when we run the container, the `cont1` is deleted now. Type `docker ps -a` to check.
 Let's create another container and mount the `user-volume` into with.
-```docker
+
+```bash
 docker run -it --rm --name cont2 --volume user-volume:/app debian bash
 ```
-If you type `ls -p` you'll see that the `app/` directory is exist. `cd` to it and type `ls` again.\
+
+If you type `ls -p` you'll see that the `app/` directory is exist. `cd` into it and type `ls` again.\
 
 ![Screenshot from 2024-02-16 16-48-05](https://github.com/isadri/inception/assets/116354167/722a74ec-a66a-45f0-83ea-74426c5deb4d)
 
-The `cont1_file` that was created by the `cont1` container, that has been deleted, is also exist. Check its content by using `cat` command.
+The `cont1_file` that was created by the `cont1` container (which has been deleted) is also exist. Check its content by using `cat` command.
 
 ![Screenshot from 2024-02-16 16-49-40](https://github.com/isadri/inception/assets/116354167/0f1ba1c1-ab19-4fea-8d84-9a32007fd1cd)
 
@@ -923,12 +942,16 @@ This content is the content you wrote in the `cont1` container. So, even we have
 ![Screenshot from 2024-02-17 10-28-30](https://github.com/isadri/inception/assets/116354167/755f377f-8abf-428e-b431-bf7e89a8f6eb)
 
 Now type `exit` to exit and delete the `cont2` container.
+
 We'll work with volumes more in the [Hands-On part](#Hands\-On).
+
+---
 
 ## Security
 
-Though we usually talk about Linux containers as a single entity, they are, in fact, implemented through several separate mechanisms built into the Linux kernel that all work together: control groups (cgroups), namespaces, and SELinux or AppArmor, all of which serve to contain the process. cgroups provide for resource limits, namespaces allow for processes to use identically named resources and isolate them from each other's view of the system, and SELinux or AppArmor provides strong security isolation.
-When running Docker, you can think of your computer as a hotel. Each container that you run is an individual room with one or more guests (your processes) in it. Namespacess make up the walls of the room, and ensure that processes cannot interact with neighboring processes in any ways that they are not specifically allowed to. Control groups are like the floor and ceiling of the room, trying to ensure that the inhabitants have the resources they need to enjoy their stay, without allowing them to use resources or space reserved for others. Finally, SELinux and AppArmor are a bit like hotel security, ensuring that even if something unexpected or untoward happens, it is unlikely to cause much more than the headache of filling out paperwork and filing an incident report.
+Though we usually talk about Linux containers as a single entity, they are, in fact, implemented through several separate mechanisms built into the Linux kernel that all work together: control groups (cgroups), namespaces, and SELinux and AppArmor, all of which serve to contain the process. cgroups provide for resource limits, namespaces allow for processes to use identically named resources and isolate them from each other's view of the system, and SELinux and AppArmor provide strong security isolation.
+
+When running Docker, you can think of your computer as a hotel. Each container that you run is an individual room with one or more guests (your processes) in it. Namespaces make up the walls of the room, and ensure that processes cannot interact with neighboring processes in any ways that they are not specifically allowed to. Control groups are like the floor and ceiling of the room, trying to ensure that the inhabitants have the resources they need to enjoy their stay, without allowing them to use resources or space reserved for others. Finally, SELinux and AppArmor are a bit like hotel security, ensuring that even if something unexpected or untoward happens, it is unlikely to cause much more than the headache of filling out paperwork and filing an incident report.
 
 ### cgroups
 
@@ -936,8 +959,9 @@ When running Docker, you can think of your computer as a hotel. Each container t
 
 ### Namespaces
 
-Inside each container, you see a filesystem, network interfaces, disks, and other resources that all appear to be unique to the container despite sharing the kernel with all the other processes on the system. t's what makes your container fell like a machine all by itself. The way this is implemented in the kernel is with *namespaces*. Namespaces take a traditionally global resource and present the container with its own unique and unshared version of that resource.
-Rather than just having a single namespace, however, containers have a namespace on each of the six types of resources that are currently namespaced in the kernel: MNT, UTS, IPC, PID, NET and USER namespaces.
+Inside each container, you see a filesystem, network interfaces, disks, and other resources that all appear to be unique to the container despite sharing the kernel with all the other processes on the system. It's what makes your container fell like a machine all by itself. The way this is implemented in the kernel is with *namespaces*. Namespaces take a traditionally global resource and present the container with its own unique and unshared version of that resource.
+
+Rather than just having a single namespace, however, containers have a namespace on each of the six types of resources that are currently namespaced in the kernel: **MNT**, **UTS**, **IPC**, **PID**, **NET** and **USER** namespaces.
 
 ![Screenshot from 2024-02-21 11-13-31](https://github.com/isadri/inception/assets/116354167/c4177257-7c71-46ad-a97f-48ed537b7e7b)
 
@@ -945,7 +969,7 @@ Essentially when you talk about a container, you're talking about a number of di
 
 * **MNT (Mount) namespace**:
 
-Docker uses this primarily to make your container look like it has its own entire filesystem namespace. This means every container can have its own `/etc`, `/var`, `/dev` and other important filesystem constructs. Processes inside a container cannnot access the filesystems on the host or other containers, they can only see and access their own isolated filesystem. If you use `docker exec` to get into a container, you'll see a filesystem rooted on `/`. But we know that this isn't the actual root partition of the system. It's the mount namespace that makes that possible.
+Docker uses this primarily to make your container looks like it has its own entire filesystem namespace. This means every container can have its own `/etc`, `/var`, `/dev` and other important filesystem constructs. Processes inside a container cannnot access the filesystems on the host or other containers, they can only see and access their own isolated filesystem. If you use `docker exec` to get into a running container, you'll see a filesystem rooted on `/`. But we know that this isn't the actual root partition of the system. It's the mount namespace that makes that possible.
 
 * **UTS namespace**:
 
@@ -953,8 +977,7 @@ UTS (Unix Timesharing System) namespace gives your container its own hostname an
 
 ![Screenshot from 2024-02-21 11-20-14](https://github.com/isadri/inception/assets/116354167/723dee07-5d7c-4671-8a04-25b98d76d047)
 
-That is the container's ID!
-It's the namespace that makes that happen.
+That is the container's ID! And it's the UTS namespace that makes that happen.
 
 * **IPC (Inter-Process Communication) namespace**:
 
@@ -974,19 +997,18 @@ These provide isolation between the user and group IDs inside a container and th
 
 ### Capabilities
 
-Docker can adjust a container's authorization to use individual operating system features. In Linux, these feature authorizations are called *capabilities*. Whenever a process attempts to make a gated system call such as opening a network socket, the capabilities of that process are checked for the required capability. The call will succeed if the process has the required capability, and fail otherwise.
+Docker can adjust a container's authorization to use individual operating system features. In Linux, these feature authorizations are called *capabilities*. Whenever a process attempts to make a system call such as opening a network socket, the capabilities of that process are checked for the required capability. The call will succeed if the process has the required capability, and fail otherwise.
+
 When you create a new container, Docker drops all capabilities except for an explicit list of capabilities that are necessary and safe to run most applications.
 
 ### AppArmor and SELinux
 
-Docker works with major Linux MAC (Mandatory Access Control) technologies such as [AppArmor](https://en.wikipedia.org/wiki/AppArmor) and [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux).
+Docker works with major [Linux MAC](https://en.wikipedia.org/wiki/Mandatory_access_control) (Mandatory Access Control) technologies such as [AppArmor](https://en.wikipedia.org/wiki/AppArmor) and [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux).
+
 Docker applies default profiles to all new containers. Docker also lets you start containers without policies, as well as giving you the ability to customize policies to meet specific requirements.
+
 Docker uses [*seccomp*](https://en.wikipedia.org/wiki/Seccomp) to limit the syscalls a container can make to the host's kernel.
 
-
-
-
-Docker on Linux supports some Linux isolation features that ensure softwares running on containers only uses the computing resources and access the data you expect. And also Docker adds some of its own excellent security technologies, which i will not cover in this article.
 
 
 # Hands-On

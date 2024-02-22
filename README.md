@@ -17,6 +17,7 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
    * [Images](#Images)
    * [Containers](#Containers)
    * [Networking](#Networking)
+   * [Volumes](#Volumes)
    * [Security](#Security)
 
 2. [Hands-On](#Hands\-On)
@@ -125,6 +126,8 @@ Creating a new container is much faster than creating a new virtual machine. The
 
 The lightness of containers means that you can use them for situations where creating another virtual machine would be too heavyweight or where you need something to be truly ephemeral. You probably wouldn’t, for instance, spin up an entire virtual machine to run a *curl* command to a website from a remote location, but you might spin up a new container for this purpose.
 
+----
+
 ## The Docker Engine
 
 Now let’s talk about the Docker engine. As **Nigel Poulton** mentions in his book: *to be a real master of anything, you need to understand what’s going on under the hood*. So what’s the Docker engine?
@@ -213,6 +216,8 @@ Once a container’s parent process runc process exits, the associated container
 ### What is left to the daemon?
 
 The daemon is capable of pushing and pulling images, implementing the Docker API, authentication, security, etc.
+
+----
 
 ## Images
 
@@ -338,6 +343,8 @@ For example, when Docker pulls an image on Linux on ARM, Docker makes the releva
 You can use the `docker manifest inspect <image> | grep ‘architecture\|os` to inspect the manifest list of any image. For example, here’s the manifest list of Debian image on Docker Hub:
 
 ![Screenshot from 2024-02-09 14-39-30](https://github.com/isadri/inception/assets/116354167/95ea31a4-3162-43f9-ab27-1de44daa66c6)
+
+----
 
 ## Containers
 
@@ -588,40 +595,51 @@ docker rm $(docker ps -aq)
 > [!WARNING]
 > If a container is still running, it will not delete, you need to stop it first, and then delete, or you can use the `-f` flag to force. However, using the `-f` flag will send a **SIGKILL** signal, and the container will not stop gracefull. The `docker stop` command will sends a **SIGTERM** signal and gives the container, and the app it's running, a chance to complete any operations and gracefully exit.
 
+----
+
 ## Networking
 
 Networking is all about communicating between processes that may or may not share the same local resources. To understand Docker networking, we need to understand some basic network abstractions that are commonly used by processes.
 
 ### Basics: Protocols, interfaces, and Ports
 
-A *protocol* with respect to communication and networking is a sort of language. Two parties that agree on a protocol can understand what the other is communicating.
-A network *interface* has an address and represents a location, and it has an IP address. It's common for computers to have two kinds of *interfaces*: an Ethernet interface and a loopback interface. An *Ethernet interface* is used to connect to other interfaces and processes. A *loopback interface* isn't connected to any other interface.
+A *protocol* with respect to communication and networking is a sort of language. Two parties that agree on a protocol, each one of them can understand what the other is communicating.
+
+A network *interface* has an address (an IP address) and represents a location. It's common for computers to have two kinds of *interfaces*: an Ethernet interface and a loopback interface. An *Ethernet interface* is used to connect to other interfaces and processes. A *loopback interface* isn't connected to any other interface.
 
 > [!NOTE]
 > Each container has its own private loopback and a separate virtual Ethernet interface.
 
-A network interface is like a mailbox. Messages are delivered to a mailbox for recipients at that address (IP in case of network interface), and messages are taken from a mailbox to be delivered elsewhere.
+A network interface is like a mailbox. Messages are delivered to a mailbox for recipients at an address (the IP address in case of network interface), and messages are taken from a mailbox to be delivered elsewhere.
+
 A *port* is like a recipient or a sender. Ports are just numbers, and each port is associated with a specific process or service.
+
 That's enough for the basics, let's get back to Docker networking.
 
 ### Docker Networking
 
 When you install Docker, Docker creates a virtual network, the purpose of this virtual network is to connect all of the running containers to the network that your computer is connected to. This virutal network called a *bridge*.
+
 A bridge is an interface that connects multiple networks so that they can function as a single network. Bridges work by selectively forwarding traffic between the connected networks.
 
 ![Screenshot from 2024-02-12 14-59-23](https://github.com/isadri/inception/assets/116354167/57b7d650-47dc-40ef-9e06-cf8150cc44ce)
 
 A container attached to a Docker network will get a unique IP address that is routable from other containers attached to the same Docker network.
+
 You can create and manage Docker networks directly by using the `docker network` subcommands.
-For example, to list the default networks that are availble with every Docker intallation, use the `docker network ls` command.
+
+For example, to list the default networks that are available with every Docker intallation, use the `docker network ls` command.
 
 ![Screenshot from 2024-02-12 17-44-06](https://github.com/isadri/inception/assets/116354167/8820c940-3d09-4a6b-b04b-a134a63b0d2b)
 
 By default, Docker includes three networks, and each is provided by a different dirver. And these networks are:
+
 * ***bridge***:
-  this is the default network and provided by a *bridge* driver. The *bridge* driver provides intercontainer connectivity for all containers running on the same machine. The *bridge* driver uses Linux namepaces, virtual Ethernet devices, and the Linux firewall to build the *bridge* network. The *bridge* network is then local to the machine where Docker is installed and creates routes between participating containers and the wider network where the host is attached.
+  this is the default network and provided by a *bridge* driver. The *bridge* driver provides intercontainer connectivity for all containers running on the same machine. The *bridge* driver uses Linux namespaces, virtual Ethernet devices, and the Linux firewall to build the *bridge* network. The *bridge* network is then local to the machine where Docker is installed and creates routes between participating containers and the wider network where the host is attached.
+
 *  ***host***:
   this network is provided by the *host* driver, which instructs Docker not to create any special networking namespace or resources for attached containers (which is the case for the *bridge* network). Containers on the *host* network interact with the host's network stack like any other uncontained processes.
+
 *  ***none***:
   the *none* network uses the *null* driver. Containers attached to the *none* network will not have any network connectivity outside themselves.
 
@@ -631,10 +649,13 @@ By default, Docker includes three networks, and each is provided by a different 
 ### Ping a Container From Another Container
 
 Let's create a new container and run it in the background.
+
 ```bash
 docker run -d --name c1 debian sleep 1d
 ```
+
 Now, create another interactive container.
+
 ```bash
 docker run -it --name c2 debian bash
 ```
@@ -650,18 +671,20 @@ We know that every container created is connected to the *bridge* network by def
 
 ![Screenshot from 2024-02-14 11-48-59](https://github.com/isadri/inception/assets/116354167/79239ef7-34d1-440a-ae83-68733baa6f72)
 
-The output is trimmed because we're only interested in the containers that are connected to the network. We can see that both the `c1` and `c2` containers are attached to the *bridge* network along with their IP addresses. The IP address of the `c1` container is 172.17.0.2.
+The output is trimmed because we're only interested in the containers that are connected to the network. We can see that both the `c1` and `c2` containers are attached to the *bridge* network along with their IP addresses. The IP address of the `c1` container is `172.17.0.2`.
+
 Now attach to the `c2` container again by using the `docker attach c2` command.
+
 Once we are inside the `c2` container, we can ping the `c1` container.
 
 ![Screenshot from 2024-02-14 11-49-49](https://github.com/isadri/inception/assets/116354167/169d3837-b849-458e-ad8b-2666474e3f27)
 
 The command works!
 
-But the problem is that if you want to ping the `c1` container by name (i.e., `ping c1`), the command won't work. This is because the *bridge* network support a Docker feature called *service discovery*.
+But the problem is that if you want to ping the `c1` container by name (i.e., `ping c1`), the command won't work. This is because the *bridge* network does not support a Docker feature called *service discovery*.
 
 > [!NOTE]
-> *Service discovery* allows all containers and Swarm services to locate each other by name. The only requirement is that they be on the same network.
+> *Service discovery* allows all containers to locate each other by name. The only requirement is that they be on the same network.
 
 So, using the *bridge* default network is not recommended. And that's why you need to create your own bridge network.
 
@@ -671,19 +694,24 @@ Each container is assigned a unique private IP address that's not directly reach
 
 ![Screenshot from 2024-02-14 13-15-44](https://github.com/isadri/inception/assets/116354167/97bb7a32-02e4-40eb-8ea1-6e51cfed250f)
 
-Build a new container with the following command:
+The `docker network create` command is used to create a new network.
+
 ```bash
 docker network create --driver bridge --attachable user-network
 ```
-This command creates a new local bridge network named `user-network`. And we specify the driver to be used to create the network as the `bridge` (by default it will be the `bridge`, so you can use the command without the `--driver` flag). Making the new network as `attachable` allows us to attach and detach containers from the network at any time. Check that the network has been created by running the `docker network ls`.
+
+This command creates a new local bridge network named `user-network`. And we specify the driver to be used to create the network as the `bridge` (by default it will be the `bridge` driver, so you can use the command without the `--driver` flag). Making the new network as `attachable` allows us to attach and detach containers from the network at any time. Check that the network has been created by running the `docker network ls`.
 
 ![Screenshot from 2024-02-14 13-22-46](https://github.com/isadri/inception/assets/116354167/0ea39aec-b47a-4e98-8ede-7c604f2b13db)
 
 We'll now create a new container attached to that network.
+
 ```bash
 docker run -it --network user-network --name network-explorer debian sh
 ```
+
 List the IP addresses that are available in the container by running:
+
 ```bash
 ip addr
 ```
@@ -696,11 +724,14 @@ ip addr
 
 ![Screenshot from 2024-02-14 13-27-08](https://github.com/isadri/inception/assets/116354167/15330dab-6966-4b00-bf7e-54837ae6575a)
 
-You can see from this list that the container has two network devices: the loopback interface (or localhost) and eth0 (a virtual Ethernet device), which is connected to the bridge network. The IP address of the eth0 (i.e., `172.18.0.2`) is the one that any other container on this bridge network should use to communicate with services you run in this container. The loopback interface can be used only for communication within the same container.
+You can see from this list that the container has two network devices: the loopback interface (or localhost) and eth0 (a virtual Ethernet device), which is connected to the bridge network. The IP address of the eth0 (i.e., `172.18.0.2`) is the one that any other container on this bridge network can use to communicate with services you run in this container. The loopback interface can be used only for communication within the same container.
+
 Next, we'll create another bridge network and attach our running `network-explorer` container to both networks. First, detach your terminal from the running container (press Ctrl-P and then Ctrl-Q) and then create the second bridge network
+
 ```bash
 docker network create --attachable user-network2
 ```
+
 Again, check that the network has been created by using `docker network ls`.
 
 ![Screenshot from 2024-02-14 15-16-45](https://github.com/isadri/inception/assets/116354167/ddd1d655-757e-460b-aaad-a7cc85bd5476)
@@ -709,56 +740,73 @@ Again, check that the network has been created by using `docker network ls`.
 > Notice that the driver is the `bridge` driver even we didn't specify it with the `--driver` flag.
 
 Once the second network has been created, we can attach the `network-explorer` container to the `user-network2` network by using the following command.
+
 ```bash
 docker network connect user-network2 network-explorer
 ```
+
 After the container has been attached to the second network, we'll go back to our `network-explorer` container.
+
 ```bash
 docker attach network-explorer
 ```
+
 List again the IP address by using `ip addr` command.
 
 ![Screenshot from 2024-02-14 15-20-36](https://github.com/isadri/inception/assets/116354167/fa13604f-a727-4267-8714-8b3227e4d1ef)
 
 We see that a new network interface has been added, and our container is attached to both user-defined bridge networks.
-Now, we'll back to our ping example, but instead of running two containers attached to the default bridge network, we'll run them in a user-defined network. Let's create a new container attached to the `user-network` network (you can use `user-network2`).
+
+Now, we'll back to our ping example, but instead of running two containers attached to the default bridge network, we'll run them in a user-defined network. Let's create a new container attached to the `user-network` network (you can also use `user-network2`).
+
 ```bash
 docker run -d --network user-network --name user1 debian sleep 1d
 ```
+
 Now, run the other container
+
 ```bash
 docker run -it --network user-network --name user2 debian bash
 ```
-and install `ip` command using
+
+and install the `ping` command using
+
 ```bash
 apt-get update && apt-get install -y iputils-ping
 ```
+
 Now, ping it using `ping user1` command.
 
 ![Screenshot from 2024-02-14 15-38-15](https://github.com/isadri/inception/assets/116354167/9d2f6349-90b3-482f-af63-92bdf8469673)
 
-As you can see, we managed to ping the `user1` container by name instead of its IP address.
-This is because (and by [docker docs](https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.
+As you can see, we managed to ping the `user1` container by name instead of its IP address. This is because (and by [docker docs](https://docs.docker.com/network/drivers/bridge/)) containers on the default *bridge* network can only access each other by IP addresses, unless you use the `--link` option. On a user-defined bridge network, containers can resolve each other by name.
 
 ### Port Publication
 
 Now that we can connect a container with another, how can we connect it to an external network?
+
 Docker allows us to do that by mapping the host port to the container port at container creationg and cannot be changed later, so traffic hitting the host port will be directed to the container port. The `docker run` and `docker create` commands provide a `-p` or `--publish` list option. The format of the `-p` option is as follows
 
 ![Screenshot from 2024-02-13 11-17-21](https://github.com/isadri/inception/assets/116354167/f772ad84-bb7c-4f55-b4b6-c1b4a5faf03f)
 
 This option will forward traffic hitting port 8080 from all host interfaces to port 8080 in the new container. This is the full format, you can use intead `8080:8080` for the same effect. We see this in action in the [Hands-on](#Hands\-On) part.
 
-## Docker Volumes
+----
+
+## Volumes
 
 There are two main categories of data: persistent and non-persistent.
 Persistent is the data we need to keep. *Non-persisten* is the data we don't need to keep.
+
 * ***Non-persistent Data:***
 
   To deal with non-persistent data, Every Docker container gets its own non-persistent storage. When a container is launched from an image, Docker mounts a read-write filesystem on top of any layers of the image that the container was created from. This is where whatever processes we want our container to run will execute.
 When Docker first starts a container, the initial read-write layer is empty. As changes occur, they are applied to this layer; for example, if you want to change a file, then that file will be copied from the read-only layer below into the read-write layer. The read-only version of the file will still exist but is now hidden underneath the copy.
 This pattern is traditionally called *copy on write*. Each read-only layer is read-only, this image never changes. When a container is created, Docker builds from the stack of images and then adds the read-write layer on top. That layer, combined with the knowledge of the image layers below it and some configuration data, form the container.
 As a result, deleting the container will delete the storage and any data on it.
+
+![Screenshot from 2024-02-22 11-24-57](https://github.com/isadri/inception/assets/116354167/1859d514-41a8-4ba7-ad50-61e0cca31554)
+
 * ***Persistent Data:***
 
   To deal with persistent data, you need to manage the container filesystem and mount points.

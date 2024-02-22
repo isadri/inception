@@ -230,7 +230,7 @@ Images are made up of multiple [*layers*](#Images-and-Layers) that are stacked o
 
 You use the `docker run` and `docker service create` commands to start one or more containers from a single image. Once you’ve started a container from an image, the two constructs become dependent on each other, and you cannot delete the image until the last container using it has been stopped and destroyed.
 
-### Images are usually small
+### Images Are Usually Small
 
 The whole purpose of a container is to run a single application or service. This means it only needs the code and dependencies of the app it’s running, it doesn’t need anything else.
 
@@ -238,7 +238,7 @@ Images don’t include a kernel. This is because containers share the kernel of 
 
 Windows-bases images tend to be a lot bigger than Linux-based images because of the way the Windows OS works.
 
-### Pulling images
+### Pulling Images
 
 A cleanly installed Docker host has no images in its local repository.
 
@@ -256,7 +256,7 @@ docker images
 
 ![Screenshot from 2024-02-10 11-07-02](https://github.com/isadri/inception/assets/116354167/71b46f6d-349c-4d8b-b711-8edf392b860f)
 
-### Image naming
+### Image Naming
 
 When pulling an image, you have to specify the name of the image you’re pulling. **But how does Docker find an image?**
 
@@ -270,7 +270,7 @@ Image registries contain one or more *image repositories*. In turn, image reposi
 
 ![Screenshot from 2024-02-08 18-13-50](https://github.com/isadri/inception/assets/116354167/ca2ba681-cf72-452e-b9d9-8ddbc1c9432f)
 
-### Image naming and tagging
+### Image Tagging
 
 As you saw, to pull a Debian image we used the following command `docker pull debian:latest`. The format for ‘docker pull’ is as follows:
 
@@ -352,7 +352,7 @@ For example, let's assume you want to run an application inside of a VM. First, 
 
 ![Screenshot from 2024-02-10 16-45-08](https://github.com/isadri/inception/assets/116354167/575e6cc5-97a0-471b-a21a-13ab0ca23c9b)
 
-Contrast this with a container where the host's OS claims all hardware resources. Next you install a container engine such as Docker. The container engine then carves-up the OS resources (process tree, filesystem, network stack etc) and packages them into container. Inside of the container you run the application. This means that if you want to run 4 application, you'd create 4 containers in the same OS (the host's OS) and run a single application inside each.
+Contrast this with a container where the host's OS claims all hardware resources. Next you install a container engine such as Docker. The container engine then carves-up the OS resources (process tree, filesystem, network stack etc.) and packages them into container. Inside of the container you run the application. This means that if you want to run 4 application, you'd create 4 containers in the same OS (the host's OS) and run a single application inside each.
 
 ![Screenshot from 2024-02-10 17-26-47](https://github.com/isadri/inception/assets/116354167/55531520-e778-4a0a-9d73-ca1bf58bbc56)
 
@@ -363,7 +363,7 @@ At a high level, hypervisors perform **hardware virtualization** - they carve up
 
 Now we know the difference between containers and VMs, let's see how to create a container?
 
-### Creating containers
+### Creating Containers
 
 To start a container, we use the `docker run` command. `docker run` wraps two separate steps into one. The first thing it does is create a container from the underlying image. You can use the `docker create` to do this. The second thing `docker run` does is execute the container, which you can also do separately with the `docker start` command.
 For example, lets run a new container from a Debian image.
@@ -374,6 +374,7 @@ For example, lets run a new container from a Debian image.
 > Since we didn't specify a tag for the image, Docker will use the *latest* tag, but as you remember, if the image's repository doesn't include the *latest* tag the command will fail.
 
 Let's look at each piece of this command:
+
   1. First, we told Docker to run a command using `docker run`.
   2. In the `-it` flags, the `-i` flag keeps **STDIN** open from the container, even if we're not attached to it. This persistent standard input is one half of what we need for an interactive shell. The `-t` flag is the other half and tells Docker to assign a pseudo-tty to the container we're about to create. This provides us with an interactive shell in the new container.
   3. Next, we told Docker which image to use to create a container, in this case the **debian** image.
@@ -382,10 +383,11 @@ Docker then used this image to create a new container inside a filesystem. The c
 When the container had been created, Docker ran the `/bin/bash` command inside it, and the container's shell was presented to us.
 
 > [!NOTE]
-> When you run this command the first time in your Docker host, Docker will not find the image in your Docker host, and it will grab it from Docker Hub, and then downloaded it. But, if you run the same command again, Docker will find the image in your Docker host, and it will create the container directly, without downloaded the image again. You can see it in action. Run the same command again, and you will notice that the container executed much faster.
+> When you run this command the first time in your Docker host, Docker will not find the image in your Docker host, and it will grab it from Docker Hub (the default registry), and then downloaded it. But, if you run the same command again, Docker will find the image in your Docker host, and it will create the container directly, without downloaded the image again. You can see it in action. Run the same command again, and you will notice that the container executed much faster.
 
 ### Working with our first container
-Now we are inside the container as the *root* user, and it is a fully fledged Debian host, and we can anything we like in it. Let's see the container's hostname.
+
+Now we are inside the container as the *root* user, and it is a fully fledged Debian host, and we can do anything we like in it. Let's see the container's hostname.
 
 ![Screenshot from 2024-02-10 17-55-49](https://github.com/isadri/inception/assets/116354167/94acb44f-b817-4634-9a05-84a2df57af78)
 
@@ -400,7 +402,7 @@ You will notice that the container's hostname is the same as the container's ID.
 
 ![Screenshot from 2024-02-10 18-01-13](https://github.com/isadri/inception/assets/116354167/5a9d3ac1-2d3c-4604-bd1a-76c3cbc96b7f)
 
-We will see that Docker has added a host entry for our container with its IP address. And we'll use the `hostname -I` command the see the container's IP.
+We will see that Docker has added a host entry for our container with its IP address. And we'll use the `hostname -I` command to see the container's IP.
 
 ![Screenshot from 2024-02-10 18-04-39](https://github.com/isadri/inception/assets/116354167/363b7b1c-8cf0-4b5e-a307-c0f704a1c6ed)
 
@@ -418,7 +420,7 @@ Now, after we installed the `ps` command, we can use it to see its running proce
 
 ![Screenshot from 2024-02-10 18-13-44](https://github.com/isadri/inception/assets/116354167/5634f2a3-5c9e-4f47-8999-e08f07afe0f4)
 
-You can keep playing with the container for as along as you like. When you're done, type `exit` or *Ctl-D*, and you'll return to the command prompt of your host.
+You can keep playing with the container as along as you like. When you're done, type `exit` or *Ctl-D*, and you'll return to the command prompt of your host.
 Now the container has stopped running. The container only runs for as long as the command we specified, `/bin/bash`, is running. Once we exited the container, that command ended, and the container was stopped.
 
 > [!NOTE]

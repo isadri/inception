@@ -385,6 +385,10 @@ When the container had been created, Docker ran the `/bin/bash` command inside i
  4. the `--name` flag gives the container a name in place of the automatically name that Docker generates, in our case we use `container_1` as the container name.
 
 > [!NOTE]
+> Container names are useful to help us identify and build logical connections between containers and applications, as we will see later.
+> And remember that the names are unique. You cannot create two containers with the same name, you need to delete the previous container with the same name before you can create a new one.
+
+> [!NOTE]
 > When you run this command the first time in your Docker host, Docker will not find the image in your Docker host, and it will grab it from Docker Hub (the default registry), and then downloaded it. But, if you run the same command again, Docker will find the image in your Docker host, and it will create the container directly, without downloaded the image again. You can see it in action. Run the same command again, and you will notice that the container executed much faster.
 
 ### Working with our first container
@@ -410,7 +414,8 @@ We will see that Docker has added a host entry for our container with its IP add
 
 We see that the container have an IP address of `172.17.0.2`, just like any other host. We can also check its running processes.
 
-![Screenshot from 2024-02-10 18-06-15](https://github.com/isadri/inception/assets/116354167/4ea272cf-254d-4898-8236-9e37f8d15b4d)
+![Screenshot from 2024-02-22 10-45-47](https://github.com/isadri/inception/assets/116354167/4524af76-3c57-46d9-b21d-690d3215054a)
+
 
 The `ps` command does not exist in the container, so how do we install it? Well, remember, we are inside a Debian system, so we can just install `ps` command by using the `apt-get` package manager as follows.
 
@@ -420,13 +425,13 @@ apt-get update && apt-get install procps
 
 Now, after we installed the `ps` command, we can use it to see its running processes.
 
-![Screenshot from 2024-02-10 18-13-44](https://github.com/isadri/inception/assets/116354167/5634f2a3-5c9e-4f47-8999-e08f07afe0f4)
+![Screenshot from 2024-02-22 10-46-40](https://github.com/isadri/inception/assets/116354167/f0f90983-7ec1-465e-b17e-ecc4e7942fab)
 
 You can keep playing with the container as along as you like. When you're done, type `exit` or *Ctl-D*, and you'll return to the command prompt of your host.
 Now the container has stopped running. The container only runs for as long as the command we specified, `/bin/bash`, is running. Once we exited the container, that command ended, and the container was stopped.
 
 > [!NOTE]
-> Containers run until the main process exits.
+> Containers run until the main process exits (PID 1).
 
 If we use the `docker ps` command, we will not see the container that we were inside of it.
 
@@ -434,14 +439,9 @@ If we use the `docker ps` command, we will not see the container that we were in
 
 But the container still exits, it is just stopped. Add the `-a` flag to `docker ps` command to show all containers, no matter if they are running or are stopped.
 
-![Screenshot from 2024-02-10 18-22-11](https://github.com/isadri/inception/assets/116354167/f8acb198-610e-492f-863a-9f0819d975e1)
+![Screenshot from 2024-02-22 10-47-37](https://github.com/isadri/inception/assets/116354167/6c43223a-c46e-4bb1-8fda-145cc2a99cae)
 
 The *STATUS* field says that the container is stopped 2 minutes ago with 0 as the exit status.
-
-> [!NOTE]
-> If you want to specify a particular name of a container in place of the automatically name that Docker generates, you can use the `--name` flag like this: `docker run --name container_1 -it debian /bin/bash`.
-> Container names are useful to help us identify and build logical connections between containers and applications, as we will see later.
-> And remember that the names are unique. You cannot create two containers with the same name, you need to delete the previous container with the same name before you can create a new one.
 
 ### Starting a stopped container
 
@@ -455,7 +455,7 @@ docker start container_1
 or
 
 ```bash
-docker start 0af8722f3fea
+docker start 2f95fac95f18
 ```
 
 > [!NOTE]
@@ -463,7 +463,7 @@ docker start 0af8722f3fea
 
 Now if we run the `docker ps` command again without the `-a` flag, we will see that our container is back to life.
 
-![Screenshot from 2024-02-10 18-37-37](https://github.com/isadri/inception/assets/116354167/6b2a98eb-c620-4621-863f-90d2a7d7ca2b)
+![Screenshot from 2024-02-22 10-49-27](https://github.com/isadri/inception/assets/116354167/c79cdd1e-386c-4ef7-b938-fbac1744d862)
 
 Our container is running now, but how can we go inside of it (or more technically, *attach to it*)?
 
@@ -519,22 +519,29 @@ This command will create a new bash session inside the container.
 ### Stopping a daemonized container
 
 Now our container_2 container is running, but how to stop it? This is as simple as using the `docker stop` command.
+
 ```bash
 docker stop container_2
 ```
+
 or via the container ID
+
 ```bash
 docker stop c18084c9f8f0
 ```
+
 Now run the `docker ps -a` command to see that the container is actually stopped.
 
 ### Automatic container restarts
 
-What if you want your container to be running even if the container has stopped because of a failure? To do this, you can use the `--restart` flag with the `docker run` command. The `--restart` checks for the container's exit code and makes a decision whether or not to restart it.
+What could you do if you want your container to be running even if the container has stopped because of a failure? To do this, you can use the `--restart` flag with the `docker run` command. The `--restart` checks for the container's exit code and makes a decision whether or not to restart it.
+
 ```bash
 docker run -d --name container_3 --restart=always debian /bin/sh -c "while true: do echo hello inception; sleep 1; done"
 ```
+
 There is three restart policies you can, and these are:
+
   * `always`
   * `unless-stopped`
   * `on-failure`
@@ -550,26 +557,32 @@ The `always` policy restarts a failed container unless it's been explicitly stop
 > Be aware that Docker has restarted the same container and not created a new one.
 
 > [!WARNING]
-> If you start a container with the `--restart=alway` policy and you stop it using `docker stop` and then you restart the Docker daemon, the container will be restarted.
-> You can try this, by stopping the container_4 container, and then restart the Docker daemon using `sudo systemctl restart docker`. When you type `docker ps`, you will that the container is automatically restarted.
+> If you start a container with the `--restart=always` policy and you stop it using `docker stop` and then you restart the Docker daemon, the container will be restarted.
+> You can try this, by stopping the `container_4` container, and then restart the Docker daemon using `sudo systemctl restart docker`. When you type `docker ps`, you will that the container is automatically restarted.
 
 The main difference between the `always` and `unless-stopped` policies is that containers with the `--restart=unless-stopped` policy will not be restarted when the daemon restarts if they were in the *Stopped (Exited)* state.
+
 The `on-failure` policy will restart a container if it exits with a non-zero exit code. It will also restart containers when the Docker daemon restarts, even ones that were in the stopped state.
 
 ### Deleting a container
 
 We've create many containers, and now we're not using any one of them, and they take some memory space. Thus, it's time to delete them.
-To delete a container, we use the `docker rm` container along with the name of the container we want to delete or its ID.
+To delete a container, we use the `docker rm` container along with the list of names of the containers we want to delete or its ID.
+
 ```bash
 docker rm container_1
 ```
+
 or
+
 ```bash
 docker rm d54d3fa008e6
 ```
+
 Writing the name of each container we want to delete is annoying. For that, we'll use this command to delete all the containers.
+
 ```bash
-docker rum $(docker ps -aq)
+docker rm $(docker ps -aq)
 ```
 
 > [!WARNING]

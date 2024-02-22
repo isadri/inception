@@ -368,7 +368,8 @@ Now we know the difference between containers and VMs, let's see how to create a
 To start a container, we use the `docker run` command. `docker run` wraps two separate steps into one. The first thing it does is create a container from the underlying image. You can use the `docker create` to do this. The second thing `docker run` does is execute the container, which you can also do separately with the `docker start` command.
 For example, lets run a new container from a Debian image.
 
-![Screenshot from 2024-02-10 17-37-31](https://github.com/isadri/inception/assets/116354167/f80e2961-248f-497f-973b-3ea768635ac0)
+![Screenshot from 2024-02-22 10-39-00](https://github.com/isadri/inception/assets/116354167/a906e469-d6a8-4a25-a331-ebb93a74c66c)
+
 
 > [!NOTE]
 > Since we didn't specify a tag for the image, Docker will use the *latest* tag, but as you remember, if the image's repository doesn't include the *latest* tag the command will fail.
@@ -381,6 +382,7 @@ Let's look at each piece of this command:
 So what was happening in the background here? Firstly, Docker checked locally for the **debian** image. If it can't find the image on our local Docker host, it will reach out to the Docker Hub registry, and look for it there. Once Docker has found the image, it downloaded the image and stored it on the local host.
 Docker then used this image to create a new container inside a filesystem. The container has a network, IP address, and a bridge interface to talk to the local host. Finally, we told Docker which command to run in our new container, in this case launching a Bash shell with the `/bin/bash` command.
 When the container had been created, Docker ran the `/bin/bash` command inside it, and the container's shell was presented to us.
+ 4. the `--name` flag gives the container a name in place of the automatically name that Docker generates, in our case we use `container_1` as the container name.
 
 > [!NOTE]
 > When you run this command the first time in your Docker host, Docker will not find the image in your Docker host, and it will grab it from Docker Hub (the default registry), and then downloaded it. But, if you run the same command again, Docker will find the image in your Docker host, and it will create the container directly, without downloaded the image again. You can see it in action. Run the same command again, and you will notice that the container executed much faster.
@@ -389,24 +391,24 @@ When the container had been created, Docker ran the `/bin/bash` command inside i
 
 Now we are inside the container as the *root* user, and it is a fully fledged Debian host, and we can do anything we like in it. Let's see the container's hostname.
 
-![Screenshot from 2024-02-10 17-55-49](https://github.com/isadri/inception/assets/116354167/94acb44f-b817-4634-9a05-84a2df57af78)
+![Screenshot from 2024-02-22 10-41-56](https://github.com/isadri/inception/assets/116354167/b0cecb84-b531-4b98-991c-0e678788133b)
 
 Run the `docker ps` command in your host's terminal:
 
-![Screenshot from 2024-02-10 17-57-13](https://github.com/isadri/inception/assets/116354167/3791dbf2-6117-461f-a13b-6fc42b299b10)
+![Screenshot from 2024-02-22 10-42-32](https://github.com/isadri/inception/assets/116354167/5b4e5c49-9a60-4ca5-9adb-8cc9fb5b83d7)
 
 > [!NOTE]
 > The `docker ps` command shows information about a running container, its ID, the image used to create it, the command that is executed inside it, how much time the container is running, the ports exposed in it and the name of the container inside the Docker host.
 
 You will notice that the container's hostname is the same as the container's ID. And if we also have a look at the */etc/hosts* file.
 
-![Screenshot from 2024-02-10 18-01-13](https://github.com/isadri/inception/assets/116354167/5a9d3ac1-2d3c-4604-bd1a-76c3cbc96b7f)
+![Screenshot from 2024-02-22 10-43-05](https://github.com/isadri/inception/assets/116354167/b5731741-fcd6-4803-9633-6321bfa1f342)
 
 We will see that Docker has added a host entry for our container with its IP address. And we'll use the `hostname -I` command to see the container's IP.
 
-![Screenshot from 2024-02-10 18-04-39](https://github.com/isadri/inception/assets/116354167/363b7b1c-8cf0-4b5e-a307-c0f704a1c6ed)
+![Screenshot from 2024-02-22 10-43-34](https://github.com/isadri/inception/assets/116354167/4fbb42ec-5a7e-43e3-8f39-2fb86dac9bf2)
 
-We see that the container have an IP address of 172.17.0.2, just like any other host. We can also check its running processes.
+We see that the container have an IP address of `172.17.0.2`, just like any other host. We can also check its running processes.
 
 ![Screenshot from 2024-02-10 18-06-15](https://github.com/isadri/inception/assets/116354167/4ea272cf-254d-4898-8236-9e37f8d15b4d)
 

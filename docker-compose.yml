@@ -1,0 +1,15 @@
+version: '3.3'
+
+volumes:
+  my-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}
+
+services:
+  debian:
+    image: debian
+    volumes:
+      - my-volume:/app

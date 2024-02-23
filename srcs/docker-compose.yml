@@ -1,9 +1,21 @@
+version: '3'
+
 networks:
   app-network:
 
 volumes:
   db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '/home/essam/data'
   wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '/home/essam/data'
 
 services:
   nginx:
@@ -18,7 +30,7 @@ services:
     ports:
       - 443:443
     volumes:
-      - wordpress:/var/www/html
+      - /home/essam/data/wordpress:/var/www/html
     networks:
       - app-network
 
@@ -31,7 +43,7 @@ services:
     expose:
       - "3306"
     volumes:
-      - db:/var/lib/mysql
+      - /home/essam/data/db:/var/lib/mysql
     networks:
       - app-network
 
@@ -44,6 +56,6 @@ services:
     restart: on-failure
     env_file: .env
     volumes:
-      - wordpress:/var/www/html
+      - /home/essam/data/wordpress:/var/www/html
     networks:
       - app-network

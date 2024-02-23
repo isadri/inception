@@ -21,6 +21,7 @@ So if you're only interesting in practicing with Docker, you can go to the [Hand
    * [Security](#Security)
 
 2. [Hands-On](#Hands\-On)
+   * [To Set Up](#To-Set-Up)
 
 ---
 > [!WARNING]
@@ -1009,6 +1010,24 @@ Docker applies default profiles to all new containers. Docker also lets you star
 
 Docker uses [*seccomp*](https://en.wikipedia.org/wiki/Seccomp) to limit the syscalls a container can make to the host's kernel.
 
-
+That's enough for the theory. Now we have all what we need to work with Docker containers, so let's work with them. 
 
 # Hands-On
+
+In this part, we'll set up a small infrastructure composed of different services under specific rules.
+
+The fun part here is that we'll build the Docker images ourselves, this means we won't pull any ready-made Docker images.
+
+## To Set Up
+
+We're going to set up the following:
+
+* A Docker container that contains NINGX with TLSv1.3 only.
+* A Docker container that contains WordPress + php-fpm only withou nginx.
+* A Docker container that contains MariaDB only without nginx.
+* A volume that contains our WordPress database.
+* A second volume that contains our WordPress website files.
+* A Docker network that establishes the connection between our containers
+
+And our containers have to restart in case of a failure.
+

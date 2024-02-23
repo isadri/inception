@@ -1023,7 +1023,7 @@ The fun part here is that we'll build the Docker images ourselves, this means we
 We're going to set up the following:
 
 * A Docker container that contains NINGX with TLSv1.3 only.
-* A Docker container that contains WordPress + php-fpm only withou nginx.
+* A Docker container that contains WordPress + php-fpm only without nginx.
 * A Docker container that contains MariaDB only without nginx.
 * A volume that contains our WordPress database.
 * A second volume that contains our WordPress website files.

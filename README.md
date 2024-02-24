@@ -1022,7 +1022,7 @@ The fun part here is that we'll build the Docker images ourselves, this means we
 
 We're going to set up the following:
 
-* A Docker container that contains NINGX with TLSv1.3 only.
+* A Docker container that contains NGINX with TLSv1.3 only.
 * A Docker container that contains WordPress + php-fpm only without nginx.
 * A Docker container that contains MariaDB only without nginx.
 * A volume that contains our WordPress database.
@@ -1031,3 +1031,55 @@ We're going to set up the following:
 
 And our containers have to restart in case of a failure.
 
+## Nginx
+
+We want to create a container that contains nginx with TLSv1.3 only, but without using the ready-made nginx image.
+
+The first thing we're going to do is use a base image that we'll install all what we need in it. For this case, we'll use the *debian* image.
+
+So let's start a new container based on the debian image. We know that using the *latest* tag is not a good idea, thus we'll use a stable version like *debian:bullseye*.
+
+```bash
+docker run -it --name nginx debian:bullseye bash
+```
+
+Know we're inside the container. The first we need to do is install nginx
+
+```bash
+apt-get update && apt-get install nginx
+```
+
+Start the nginx service by run the following commmand
+
+```bash
+service nginx start
+```
+
+Check that the service is running by using the `service nginx status` command. The output should be `nginx is running.`.
+
+Now, we want to make nginx listen on port 443 and the server name it will serve. (We'll use `isadri.42.fr` as a server name). In order to do this, we need to create our custom configuration file.
+
+Create a file and give it the name `nginx.conf` in the `/etc/nginx/conf.d/` directory, and put in it the following configuration
+
+```nginx
+server {
+  listen 443;
+  server_name isadri.42.fr;
+}
+```
+
+> [!WARNING]
+> You need to install a text editor in order to change a file. You can install *vim* or *nano*. In my case, I'll use *vim*
+> ```bash
+> apt-get install vim
+> ```
+
+Use the `nginx -t` command to check that the configuration is correct.
+
+Now, we need to use our browser in our local machine so that when we type `isadri.42.fr:443` the nginx page will appear to us.
+
+The problem is that this configuration that we've done is in the container, not in our local machine. What we should do is that when running the container, we need to map the host port to the container port, so when we type `isadri.42.fr:443` it will be redirected to the container. What this means is that we'll repeat what we've done again. This is not practical, and time consuming. For that we'll use **Dockerfile**
+
+### Dockerfile
+
+**Dockerfile** is a file that describes all the steps that are required to create an image. It contains instructions that tell Docker how the image we want to create should contain

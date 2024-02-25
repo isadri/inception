@@ -1139,13 +1139,7 @@ Docker validated that image specified by the `FROM` instruction was installed as
 
 A new layer is being added to the resulting image after each step in the build, and Docker caches the results of each step. If a problem with the build script occurs after several other steps, the builder can restart from the same position after the problem has been fixed.
 
-Now we have nginx installed, we need to start it. It's easy. Add the following line to our Dockerfile
-
-```Dockerfile
-RUN service nginx start
-```
-
-And we need to put our configuration file that we created in `/etc/nginx/conf.d` directory in the container. We can copy it using the `COPY` instruction
+Now we need to put our configuration file that we created in `/etc/nginx/conf.d` directory in the container. We can copy it using the `COPY` instruction
 
 ```Dockerfile
 COPY conf/nginx.conf /etc/nginx/conf.d/
@@ -1164,3 +1158,27 @@ EXPOSE 443
 ```
 
 The `EXPOSE` instruction tells Docker that the application in this container will use this specific port on the container.
+
+Build the image again and run a new interactive container. And start nginx service by using the `service nginx start` command.
+
+If you type `isadri.42.fr` in your browser, the nginx page won't show up, because we didn't map the ports. This is easy since our image contains all what we need, just add `-p 443:443` to the `docker run` command.
+
+But there's one thing we should do, and is that we need to map the loopback address of the Docker host to the `isadri.42.fr` domain name. To do this open the `/etc/hosts` file your Docker host (not in the container), and add `127.0.0.1  isadri.42.fr` line.
+
+Now run the container again using the following command
+
+```bash
+docker run -it --rm --name c1 -p 443:443 simple-dockerfile
+```
+
+Start the nginx service using
+
+```bash
+service nginx start
+```
+
+Now type `isadri.42.fr` in your browser. You'll see this page
+
+![Screenshot from 2024-02-25 12-07-44](https://github.com/isadri/inception/assets/116354167/ecb1aa90-f1e2-4544-910c-a2c336347725)
+
+Congratulations! Our configuration is working.

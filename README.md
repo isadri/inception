@@ -1078,8 +1078,34 @@ Use the `nginx -t` command to check that the configuration is correct.
 
 Now, we need to use our browser in our local machine so that when we type `isadri.42.fr:443` the nginx page will appear to us.
 
-The problem is that this configuration that we've done is in the container, not in our local machine. What we should do is that when running the container, we need to map the host port to the container port, so when we type `isadri.42.fr:443` it will be redirected to the container. What this means is that we'll repeat what we've done again. This is not practical, and time consuming. For that we'll use **Dockerfile**
+The problem is that this configuration that we've done is in the container, not in our local machine. What we should do is that when running the container, we need to map the host port to the container port, so when we type `isadri.42.fr:443` it will be redirected to the container. What this means is that we'll repeat what we've done again. This is not practical, time consuming and annoying. For that we'll use **Dockerfile**
 
 ### Dockerfile
 
-**Dockerfile** is a file that describes all the steps that are required to create an image. It contains instructions that tell Docker how the image we want to create should contain
+**Dockerfile** is a file that describes all the steps that are required to create an image. It contains instructions that tell Docker how the image we want to create should contain.
+
+For example, Dockerfile may contain this
+
+![Screenshot from 2024-02-25 10-27-23](https://github.com/isadri/inception/assets/116354167/89570824-a02d-4da8-b5f2-4fbfb4d31b6c)
+
+This Dockerfile contain just one instruction (`FROM debian:bullseye`). To build a new image from it use the `docker build` command as follows
+
+```bash
+docker build . -t simple-dockerfile
+```
+Check that the image is created by running `docker images`.
+
+![Screenshot from 2024-02-25 10-34-40](https://github.com/isadri/inception/assets/116354167/93886f87-65ba-4761-9eeb-0a61632016c4)
+
+Now you can run a container from this image as you would do for any other container
+
+```bash
+docker run -it --name simple-container simple-dockerfile
+```
+
+You should now be inside the container, and you're on a debian system.
+
+Before go deeper in Dockerfile, I'll explain the instruction that our Dockerfile contains: `FROM debian:bullseye`
+
+
+

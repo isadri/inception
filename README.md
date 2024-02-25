@@ -1091,13 +1091,14 @@ For example, Dockerfile may contain this
 This Dockerfile contain just one instruction (`FROM debian:bullseye`). To build a new image from it use the `docker build` command as follows
 
 ```bash
-docker build . -t simple-dockerfile
+docker build -t simple-dockerfile .
 ```
-Check that the image is created by running `docker images`.
+
+Running this command starts the build process. When it's completed, you should have a brand-new image that you use. Check that the image is created by running `docker images`.
 
 ![Screenshot from 2024-02-25 10-34-40](https://github.com/isadri/inception/assets/116354167/93886f87-65ba-4761-9eeb-0a61632016c4)
 
-Now you can run a container from this image as you would do for any other container
+Now you can run a container from this image
 
 ```bash
 docker run -it --name simple-container simple-dockerfile
@@ -1105,7 +1106,61 @@ docker run -it --name simple-container simple-dockerfile
 
 You should now be inside the container, and you're on a debian system.
 
-Before go deeper in Dockerfile, I'll explain the instruction that our Dockerfile contains: `FROM debian:bullseye`
+let me explain the instruction that our Dockerfile contains: `FROM debian:bullseye`
 
+The `FROM` is one of the instructions that can be used in Dockerfiles. And it specifies an existing image that the instructions that follow it will operate on, this image is called the `base image`. In our sample Dockerfile, we've specified the `debian:bullseye` image as our base image.
 
+We use the `docker build . -t simple-dockerfile` to build the image.
 
+The last argument tells Docker the location of the Docker (called the *build context*), in our case we use the period (`.`) to tell Docker to look for the file in the current directory.
+
+The `-t` option is used to give the new image a name. You can also add a tag, for example, `docker build -t simple-dockerfile:auto`, and if you don't specify any tag, like in our example, Docker will automatically tag the image as *latest*.
+
+Now we've a debian system, what we need in order to run nginx is install nginx. Add the following line to our Dockerfile:
+
+```Dockerfile
+RUN apt-get update && apt-get install -y nginx
+```
+
+The Dockerfile now looks like this
+
+![Screenshot from 2024-02-25 11-04-20](https://github.com/isadri/inception/assets/116354167/efb35be6-62a5-40cf-a78a-fca1efd07eed)
+
+Build the image using the `docker build . -t simple-dockerfile`.
+
+> [!NOTE]
+> You will notice that the build takes much longer. This is because we add another instruction that Docker should execute.
+
+The `RUN` instruction tells Docker to run the provided command.
+
+It's important to understand that each intruction triggers the creation of a new container with the specified modification. After the modification has been made, Docker commits the layer and moves on to the next instruction and container created from the fresh layer.
+
+Docker validated that image specified by the `FROM` instruction was installed as the first step of the build. If it were not, Docker would have automatically tried to pull the image. That layer will be used as the top of the image for the next instruction, `RUN`. The `RUN` instruction executes the program with the arguments we specify on top of a new image layer. Then Docker commits the filesystem changes to the layer so they are available for the next Dockerfile instruction.
+
+A new layer is being added to the resulting image after each step in the build, and Docker caches the results of each step. If a problem with the build script occurs after several other steps, the builder can restart from the same position after the problem has been fixed.
+
+Now we have nginx installed, we need to start it. It's easy. Add the following line to our Dockerfile
+
+```Dockerfile
+RUN service nginx start
+```
+
+And we need to put our configuration file that we created in `/etc/nginx/conf.d` directory in the container. We can copy it using the `COPY` instruction
+
+```Dockerfile
+COPY conf/nginx.conf /etc/nginx/conf.d/
+```
+
+The `COPY` instruction copies files from the Docker host to the container. So `COPY conf/nginx.conf /etc/nginx/conf.d/` will copy nginx.conf file (assuming the file is in the `conf/` directory which the Dockerfile is also exists in) to the `/ect/nginx/conf.d/` directory in the container.
+
+Build the image and run a new container using it and check that the file has been copied.
+
+![Screenshot from 2024-02-25 11-30-18](https://github.com/isadri/inception/assets/116354167/34a12ccb-cd0f-49af-85a8-92830aefb11a)
+
+Now we'll tell Docker that our container will use the port 443. To do this use the `EXPOSE` instruction
+
+```Dockerfile
+EXPOSE 443
+```
+
+The `EXPOSE` instruction tells Docker that the application in this container will use this specific port on the container.

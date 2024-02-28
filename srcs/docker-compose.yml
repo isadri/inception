@@ -1,61 +1,61 @@
-version: '3'
+version: '3.7'
+
+volumes:
+  db:
+  wordpress:
 
 networks:
   app-network:
 
-volumes:
-  db:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: '/home/essam/data'
-  wordpress:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: '/home/essam/data'
-
 services:
   nginx:
     build:
-      context: ./requirements/nginx/
-    command: nginx -g 'daemon off;'
+      context: requirements/nginx
     container_name: nginx
-    depends_on:
-      - wordpress
-    #healthcheck:
-    #  test: ["nc", "wordpress", "9000"]
+    env_file:
+      - .env
     ports:
       - 443:443
+    restart: unless-stopped
+    healthcheck:
+      test: CMD [ "ping", "wordpress" ] || exit 1
+      interval: 3s
+      retries: 3
+    depends_on:
+      - wordpress
     volumes:
-      - /home/essam/data/wordpress:/var/www/html
+      - wordpress:/var/www/html
+    networks:
+      - app-network
+  
+  wordpress:
+    build:
+      context: requirements/wordpress
+    container_name: wordpress
+    environment:
+      - MYSQL_HOST=mariadb:3306
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: CMD [ "ping", "mariadb" ] || exit 1
+      interval: 3s
+      retries: 3
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress:/var/www/html
     networks:
       - app-network
 
   mariadb:
     build:
-      context: ./requirements/mariadb/
+      context: requirements/mariadb
     container_name: mariadb
-    restart: on-failure
-    env_file: .env
-    expose:
-      - "3306"
+    restart: unless-stopped
+    env_file:
+      - .env
     volumes:
-      - /home/essam/data/db:/var/lib/mysql
-    networks:
-      - app-network
-
-  wordpress:
-    build:
-      context: ./requirements/wordpress/
-    container_name: wordpress
-    depends_on:
-      - mariadb
-    restart: on-failure
-    env_file: .env
-    volumes:
-      - /home/essam/data/wordpress:/var/www/html
+      - db:/var/lib/mysql
     networks:
       - app-network

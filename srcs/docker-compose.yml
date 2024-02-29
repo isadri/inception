@@ -27,7 +27,7 @@ services:
       - .env
     ports:
       - 443:443
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
       - wordpress
         #condition: service_healthy
@@ -43,7 +43,7 @@ services:
     container_name: wordpress
     env_file:
       - .env
-    restart: unless-stopped
+    restart: on-failure
     #healthcheck:
     #  #mysqladmin ping -h"$DB_HOST" --silent
     #  test: [ "CMD", "mariadb-admin",  "ping", "-h", "mariadb", "--silent" ]
@@ -61,7 +61,7 @@ services:
     build:
       context: requirements/mariadb
     container_name: mariadb
-    restart: unless-stopped
+    restart: on-failure
     env_file:
       - .env
     volumes:

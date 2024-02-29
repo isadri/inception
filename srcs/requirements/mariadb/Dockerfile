@@ -7,12 +7,6 @@ WORKDIR /app
 
 EXPOSE 3000
 
-#ENV	MYSQL_DATABASE=wp-db \
-#	MYSQL_USER=db-user \
-#	MYSQL_PASSWORD=123456 \
-#	MYSQL_ROOT=root \
-#	MYSQL_ROOT_PASSWORD=root123
-
 # install dependencies
 RUN apt-get update ;\
 	apt-get install --no-install-recommends -y mariadb-server
@@ -26,4 +20,4 @@ COPY tools/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 # create database and user for mariadb
 ENTRYPOINT [ "bash", "docker-mariadb-entrypoint.sh"]
 
-CMD [ "tail", "-f" ]
+CMD [ "mysqld" ]

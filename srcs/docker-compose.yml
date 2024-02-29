@@ -1,14 +1,25 @@
-version: '3.7'
+version: '3.8'
 
 volumes:
   db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/db
   wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/wordpress
 
 networks:
   app-network:
 
 services:
   nginx:
+    image: nginx:iabkadri
     build:
       context: requirements/nginx
     container_name: nginx
@@ -17,18 +28,16 @@ services:
     ports:
       - 443:443
     restart: unless-stopped
-    healthcheck:
-      test: CMD [ "ping", "wordpress" ] || exit 1
-      interval: 3s
-      retries: 3
     depends_on:
       - wordpress
+        #condition: service_healthy
     volumes:
       - wordpress:/var/www/html
     networks:
       - app-network
   
   wordpress:
+    image: wordpress:iabkadri
     build:
       context: requirements/wordpress
     container_name: wordpress
@@ -37,10 +46,11 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    healthcheck:
-      test: CMD [ "ping", "mariadb" ] || exit 1
-      interval: 3s
-      retries: 3
+    #healthcheck:
+    #  #mysqladmin ping -h"$DB_HOST" --silent
+    #  test: [ "CMD", "mariadb-admin",  "ping", "-h", "mariadb", "--silent" ]
+    #  interval: 3s
+    #  retries: 4
     depends_on:
       - mariadb
     volumes:
@@ -49,6 +59,7 @@ services:
       - app-network
 
   mariadb:
+    image: mariadb:iabkadri
     build:
       context: requirements/mariadb
     container_name: mariadb

@@ -8,24 +8,15 @@ EXPOSE 443
 # set /app as the working directory of the container
 WORKDIR /app
 
-#ENV DOMAIN_NAME=isadri.42.fr \
-#	KEY=/etc/ssl/private/nginx-selfsigned.key \
-#	CERT=/etc/ssl/certs/nginx-selfsigned.crt
-
-
-# set variable that hold the path of the certificate and the private key
-#ENV KEY=/etc/ssl/private/nginx-selfsigned.key \
-#	CERT=/etc/ssl/certs/nginx-selfsigned.crt \
-#	DOMAIN_NAME=isadri.42.fr
-
 # install dependencies
 RUN apt-get update ; apt-get install --no-install-recommends -y nginx vim \
 	openssl iputils-ping
 
 # create the certificate and generate the private key
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-	-keyout /etc/ssl/private/nginx-selfsigned.key -out \
-	 /etc/ssl/certs/nginx-selfsigned.crt -subj "/CN=${DOMAIN_NAME}"
+	-keyout /etc/ssl/private/nginx-selfsigned.key \
+    -out /etc/ssl/certs/nginx-selfsigned.crt \
+    -subj "/CN=${DOMAIN_NAME}"
 
 # openssl:	This is the basic command line tool for creating and managing OpenSSL certificates,
 # 			keys, and other files.
@@ -39,13 +30,8 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 # -out:	where to place the certificate.
 # -subj: fill the common name option by ${DOMAIN_NAME}
 
-# copy my nginx configuration to the container
-#COPY conf/nginx.conf /etc/nginx/sites-available/default
+# copy nginx configuration to the container
 COPY conf/nginx.conf /etc/nginx/conf.d/
-
-# wait untils wordpress service is started
-#HEALTHCHECK --interval=5s --retries=2 \
-#			CMD [ "ping", "wordpress" ] || exit 1
 
 # run nginx in the foreground
 CMD [ "nginx", "-g", "daemon off;" ]

@@ -7,9 +7,9 @@ clean:
 	@docker compose -f srcs/docker-compose.yml down
 
 fclean: clean
-	@sudo rm -rf /home/iabkadri/data/
-	@docker rmi mariadb:iabkadri wordpress:iabkadri nginx:iabkadri
-	@docker volume rm srcs_db srcs_wordpress
+	@sudo rm -rf /home/iabkadri/data/ 2>/dev/null
+	@docker rmi mariadb:iabkadri wordpress:iabkadri nginx:iabkadri 2>/dev/null
+	@docker volume rm srcs_db srcs_wordpress 2>/dev/null
 	
 re: fclean all
 

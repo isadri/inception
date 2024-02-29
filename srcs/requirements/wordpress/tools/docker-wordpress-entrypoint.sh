@@ -11,7 +11,7 @@ if ! wp core is-installed --allow-root >> /dev/null 2>&1; then
 
     # generate wp-config.php file
     wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER \
-        --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --allow-root
+        --dbpass=$MYSQL_PASSWORD --dbhost=$DB_HOST --allow-root
 
     # run the standard WordPress installation process
     wp core install --url=$DOMAIN_NAME --title=TEST \

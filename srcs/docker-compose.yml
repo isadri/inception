@@ -41,8 +41,6 @@ services:
     build:
       context: requirements/wordpress
     container_name: wordpress
-    environment:
-      - MYSQL_HOST=mariadb:3306
     env_file:
       - .env
     restart: unless-stopped

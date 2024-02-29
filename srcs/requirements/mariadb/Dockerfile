@@ -20,4 +20,4 @@ COPY tools/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 # create database and user for mariadb
 ENTRYPOINT [ "bash", "docker-mariadb-entrypoint.sh"]
 
-CMD [ "mysqld" ]
+CMD [ "mysqld_safe" ]
